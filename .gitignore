@@ -44,6 +44,7 @@ output/videos/*.mp4
 output/videos/*.avi
 output/audio/*.mp3
 output/audio/*.wav
+output/frames/
 *.log
 
 # Keep directory structure
