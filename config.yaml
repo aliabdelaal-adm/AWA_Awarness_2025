@@ -1,0 +1,45 @@
+# Video Generation Settings
+video:
+  fps: 30
+  resolution: [1920, 1080]
+  default_duration: 5  # seconds per slide
+  transition_duration: 1  # seconds
+  background_color: [255, 255, 255]
+  text_color: [0, 0, 0]
+  
+# Text-to-Speech Settings
+tts:
+  default_language: "ar"  # Arabic
+  supported_languages:
+    - ar  # Arabic
+    - en  # English
+  voice_rate: 1.0  # Speed multiplier
+  
+# PDF Processing
+pdf:
+  max_chars_per_slide: 300
+  extract_images: true
+  
+# Audio Settings
+audio:
+  format: "mp3"
+  bitrate: "192k"
+  
+# Output Settings
+output:
+  video_format: "mp4"
+  video_codec: "libx264"
+  audio_codec: "aac"
+  quality: "high"  # high, medium, low
+  
+# Template Settings
+templates:
+  default_template: "professional"
+  font_family: "Arial"
+  font_size: 48
+  title_font_size: 72
+  
+# Processing
+processing:
+  use_gpu: false
+  max_workers: 4
