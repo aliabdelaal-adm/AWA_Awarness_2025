@@ -1,0 +1,59 @@
+# Video Templates Configuration
+
+## Professional Template
+default_template: professional
+
+templates:
+  professional:
+    background:
+      type: gradient
+      color1: [41, 128, 185]    # Blue
+      color2: [52, 152, 219]    # Light Blue
+    text:
+      font: Arial
+      size: 48
+      color: [255, 255, 255]    # White
+      title_size: 72
+    transitions:
+      type: fade
+      duration: 1.0
+    
+  modern:
+    background:
+      type: solid
+      color: [255, 255, 255]    # White
+    text:
+      font: Arial
+      size: 48
+      color: [0, 0, 0]          # Black
+      title_size: 72
+    transitions:
+      type: slide
+      duration: 0.8
+  
+  dark:
+    background:
+      type: gradient
+      color1: [44, 62, 80]      # Dark Blue
+      color2: [52, 73, 94]      # Navy
+    text:
+      font: Arial-Bold
+      size: 48
+      color: [236, 240, 241]    # Light Gray
+      title_size: 72
+    transitions:
+      type: fade
+      duration: 1.0
+  
+  educational:
+    background:
+      type: solid
+      color: [236, 240, 241]    # Light Gray
+    text:
+      font: Arial
+      size: 42
+      color: [52, 73, 94]       # Dark Navy
+      title_size: 64
+    transitions:
+      type: fade
+      duration: 1.2
