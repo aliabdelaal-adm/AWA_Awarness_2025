@@ -1,0 +1,122 @@
+================================================================================
+  مرحباً بك في منصة AWA لتوليد المحتوى!
+  Welcome to AWA Content Generation Platform!
+================================================================================
+
+🎯 إذا كنت مستخدم ويندوز ولا تعرف كيف تبدأ:
+🎯 If you're a Windows user and don't know where to start:
+
+1. اقرأ الملف: WINDOWS_SETUP_GUIDE.md
+   Read the file: WINDOWS_SETUP_GUIDE.md
+   
+   هذا الملف يحتوي على دليل كامل خطوة بخطوة لتثبيت وتشغيل المنصة
+   This file contains a complete step-by-step guide to install and run the platform
+
+2. أو شاهد البطاقة المرجعية السريعة: WINDOWS_QUICK_REFERENCE.md
+   Or see the quick reference card: WINDOWS_QUICK_REFERENCE.md
+   
+   للأوامر السريعة والأمثلة الجاهزة
+   For quick commands and ready examples
+
+================================================================================
+
+📋 خطوات سريعة للبدء (إذا كان لديك Python و Git و FFmpeg مثبتة):
+📋 Quick Start Steps (if you have Python, Git & FFmpeg installed):
+
+Windows:
+--------
+1. انقر نقراً مزدوجاً على: install.bat
+   Double-click: install.bat
+   
+2. انقر نقراً مزدوجاً على: awa_launch.bat
+   Double-click: awa_launch.bat
+
+أو من Command Prompt:
+Or from Command Prompt:
+
+   cd C:\path\to\AWA_Awarness_2025
+   install.bat
+   awa_launch.bat
+
+macOS/Linux:
+-----------
+   ./install.sh
+   ./awa_launch.sh
+
+================================================================================
+
+📚 الملفات المهمة / Important Files:
+================================================================================
+
+📖 للمبتدئين / For Beginners:
+   - WINDOWS_SETUP_GUIDE.md       (دليل التثبيت الكامل لويندوز)
+   - QUICK_START.md               (دليل البدء السريع)
+   - WINDOWS_QUICK_REFERENCE.md   (بطاقة مرجعية سريعة)
+
+📖 للمستخدمين المتقدمين / For Advanced Users:
+   - README.md                    (التوثيق الكامل)
+   - HOW_TO_LAUNCH.md            (طرق متقدمة للإطلاق)
+   - FAQ.md                       (الأسئلة الشائعة)
+
+🔧 ملفات التشغيل / Launch Files:
+   - awa_launch.bat              (تشغيل المنصة - ويندوز)
+   - awa_launch.sh               (تشغيل المنصة - ماك/لينكس)
+   - install.bat                 (تثبيت المكتبات - ويندوز)
+   - install.sh                  (تثبيت المكتبات - ماك/لينكس)
+
+================================================================================
+
+💡 نصيحة سريعة / Quick Tip:
+================================================================================
+
+لتوليد عرض PowerPoint من ملف PDF:
+To generate a PowerPoint from a PDF file:
+
+   python launcher.py yourfile.pdf --format powerpoint --title "My Presentation"
+
+لتوليد فيديو بالعربية:
+To generate an Arabic video:
+
+   python launcher.py yourfile.pdf --format video --title "فيديو توعوي" --language ar
+
+لتوليد جميع الصيغ (فيديو + PowerPoint + Word + Excel + PDF):
+To generate all formats (Video + PowerPoint + Word + Excel + PDF):
+
+   python launcher.py yourfile.pdf --format all --title "Complete Package"
+
+================================================================================
+
+🆘 تحتاج مساعدة؟ / Need Help?
+================================================================================
+
+1. راجع WINDOWS_SETUP_GUIDE.md لدليل التثبيت الكامل
+   See WINDOWS_SETUP_GUIDE.md for complete installation guide
+
+2. راجع QUICK_START.md لأمثلة الاستخدام
+   See QUICK_START.md for usage examples
+
+3. راجع FAQ.md للأسئلة الشائعة
+   See FAQ.md for frequently asked questions
+
+4. افتح issue على GitHub:
+   Open an issue on GitHub:
+   https://github.com/aliabdelaal-adm/AWA_Awarness_2025/issues
+
+================================================================================
+
+✨ ميزات المنصة / Platform Features:
+================================================================================
+
+🎬 توليد فيديوهات احترافية / Professional Video Generation
+📊 عروض PowerPoint / PowerPoint Presentations  
+📄 تقارير Word و PDF / Word & PDF Reports
+📊 جداول Excel / Excel Spreadsheets
+🌍 دعم العربية والإنجليزية / Arabic & English Support
+🎤 تحويل النص إلى صوت بالذكاء الاصطناعي / AI Text-to-Speech
+
+================================================================================
+
+Made with ❤️ by AWA Awareness Team
+https://github.com/aliabdelaal-adm/AWA_Awarness_2025
+
+================================================================================
