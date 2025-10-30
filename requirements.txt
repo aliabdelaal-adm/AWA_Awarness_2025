@@ -29,9 +29,17 @@ colorama==0.4.6
 # Configuration
 pyyaml==6.0.1
 
+ copilot/add-report-and-presentation-tools
+# Document and Presentation Generation
+python-pptx==0.6.23
+python-docx==1.1.0
+openpyxl==3.1.2
+reportlab==4.0.7
+
 # Web Framework
 flask==3.1.2
 flask-cors==6.0.1
 
 # Presentation Generation
 python-pptx==1.0.2
+ main

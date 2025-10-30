@@ -43,3 +43,34 @@ templates:
 processing:
   use_gpu: false
   max_workers: 4
+
+# PowerPoint Generation
+presentation:
+  theme: "professional"
+  title_font_size: 44
+  content_font_size: 18
+  background_color: [255, 255, 255]
+  title_color: [0, 51, 102]
+  content_color: [0, 0, 0]
+  
+# Report Generation
+report:
+  page_size: "A4"
+  title_font_size: 24
+  heading_font_size: 16
+  content_font_size: 11
+  title_color: [0, 51, 102]
+  margins:
+    top: 1.0
+    bottom: 1.0
+    left: 1.0
+    right: 1.0
+    
+# Excel Generation
+excel:
+  title_font_size: 16
+  header_font_size: 12
+  content_font_size: 11
+  title_color: "003366"
+  header_color: "CCDDEE"
+  auto_width: true
