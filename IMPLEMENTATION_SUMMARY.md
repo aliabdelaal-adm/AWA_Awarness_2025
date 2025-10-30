@@ -141,7 +141,7 @@ python launcher.py input.pdf --format all --title "Title"
 ## 📁 Project Structure / هيكل المشروع
 
 ```
-AWA_Awarness_2025/
+AWA_Awareness_2025/
 ├── launcher.py                    ⭐ NEW - Main launcher
 ├── awa_launch.sh                  ⭐ NEW - Quick launch (Unix)
 ├── awa_launch.bat                 ⭐ NEW - Quick launch (Windows)
@@ -313,7 +313,7 @@ The platform is **fully functional** and ready for:
 
 - Documentation: See README.md, QUICK_START.md, HOW_TO_LAUNCH.md
 - Examples: Check examples/generate_all_formats.py
-- Issues: https://github.com/aliabdelaal-adm/AWA_Awarness_2025/issues
+- Issues: https://github.com/aliabdelaal-adm/AWA_Awareness_2025/issues
 
 ---
 
