@@ -1,0 +1,45 @@
+# Gitpod Configuration for AWA Platform
+# Alternative cloud-based development environment
+
+image:
+  file: .gitpod.Dockerfile
+
+# Install dependencies and setup
+tasks:
+  - name: Setup AWA Platform
+    init: |
+      echo "🚀 Setting up AWA Platform..."
+      
+      # Install Python dependencies
+      pip install -r requirements.txt
+      
+      # Create necessary directories
+      mkdir -p uploads output/videos output/presentations output/reports output/excel output/audio
+      
+      # Make scripts executable
+      chmod +x awa_launch.sh install.sh start_platform.sh quick_start.sh launcher.py
+      
+      echo "✅ AWA Platform is ready!"
+      echo ""
+      echo "🌐 To start the web platform: python app.py"
+      echo "🚀 Or use the launcher: python launcher.py"
+    
+    command: |
+      echo ""
+      echo "✨ AWA Platform Environment Ready!"
+      echo "📖 See CODESPACES_GUIDE.md for help (also works for Gitpod)"
+      echo ""
+
+# Expose port for Flask app
+ports:
+  - port: 5000
+    onOpen: notify
+    name: AWA Web Platform
+    description: AWA Presentation Design Platform
+
+# VS Code extensions
+vscode:
+  extensions:
+    - ms-python.python
+    - ms-python.vscode-pylance
+    - ms-toolsai.jupyter

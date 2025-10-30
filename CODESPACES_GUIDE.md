@@ -1,24 +1,39 @@
-# 🚀 استخدام منصة AWA من GitHub Codespaces
-# Using AWA Platform from GitHub Codespaces
+# 🚀 استخدام منصة AWA من البيئات السحابية
+# Using AWA Platform from Cloud Environments
+
+**GitHub Codespaces & Gitpod Support**
 
 ---
 
 ## 🌟 النسخة العربية
 
-### ما هي GitHub Codespaces؟
+### ما هي البيئات السحابية؟
 
-GitHub Codespaces هي بيئة تطوير كاملة تعمل في السحابة مباشرة من GitHub. لا تحتاج إلى تحميل أو تثبيت أي شيء على جهازك!
+البيئات السحابية (مثل GitHub Codespaces و Gitpod) هي بيئات تطوير كاملة تعمل في السحابة مباشرة من المتصفح. لا تحتاج إلى تحميل أو تثبيت أي شيء على جهازك!
 
 ### 🎯 المميزات
 
 ✅ **لا حاجة للتحميل** - العمل مباشرة من المتصفح  
 ✅ **بيئة جاهزة** - كل شيء مثبت ومهيأ تلقائياً  
 ✅ **أي جهاز** - استخدم من Windows, Mac, Linux, أو حتى iPad  
-✅ **مجاني** - 60 ساعة مجانية شهرياً للمستخدمين  
+✅ **مجاني** - ساعات مجانية شهرياً للمستخدمين  
 
-### 📝 خطوات البدء
+### 🆚 الفرق بين Codespaces و Gitpod
 
-#### الخطوة 1: فتح Codespace
+| الميزة | GitHub Codespaces | Gitpod |
+|--------|-------------------|---------|
+| الساعات المجانية | 60 ساعة/شهر | 50 ساعة/شهر |
+| التكامل | مدمج مع GitHub | يدعم GitHub, GitLab, Bitbucket |
+| السرعة | سريع جداً | سريع |
+| التوفر | حسابات GitHub | حسابات منفصلة |
+
+**كلاهما ممتاز - اختر ما يناسبك!**
+
+---
+
+## 📝 خطوات البدء مع GitHub Codespaces
+
+### الخطوة 1: فتح Codespace
 
 1. اذهب إلى صفحة المستودع على GitHub:
    ```
@@ -152,9 +167,10 @@ python launcher.py uploads/report.pdf --format all --title "تقرير شامل"
 
 ### 🐛 حل المشاكل
 
-**مشكلة: Codespace لا يفتح**
-- تأكد من تسجيل الدخول إلى GitHub
+**مشكلة: Codespace/Gitpod لا يفتح**
+- تأكد من تسجيل الدخول إلى GitHub/Gitpod
 - جرب تحديث الصفحة
+- جرب البيئة الأخرى كبديل
 
 **مشكلة: الأوامر لا تعمل**
 - تأكد من أن Terminal مفتوح (اضغط Ctrl+` لفتحه)
@@ -166,15 +182,60 @@ python launcher.py uploads/report.pdf --format all --title "تقرير شامل"
 
 ---
 
+## 📝 خطوات البدء مع Gitpod
+
+### الخطوة 1: فتح Gitpod
+
+**الطريقة السريعة:**
+
+انقر هنا مباشرة:
+```
+https://gitpod.io/#https://github.com/aliabdelaal-adm/AWA_Awarness_2025
+```
+
+أو:
+
+1. اذهب إلى صفحة المستودع على GitHub
+2. أضف `gitpod.io/#` قبل رابط المستودع في المتصفح
+3. اضغط Enter
+
+### الخطوة 2-6: نفس خطوات Codespaces
+
+باقي الخطوات مماثلة تماماً لـ Codespaces! استخدم نفس الأوامر والإرشادات.
+
+**الفرق الوحيد:**
+- Gitpod: المجلد يكون `/workspace/AWA_Awarness_2025`
+- Codespaces: المجلد يكون `/workspaces/AWA_Awarness_2025`
+
+---
+
 ## 🌟 English Version
 
-### What is GitHub Codespaces?
+### What are Cloud Development Environments?
 
-GitHub Codespaces is a complete cloud-based development environment that runs directly from GitHub. No need to download or install anything on your computer!
+Cloud development environments (like GitHub Codespaces and Gitpod) are complete development environments that run in the cloud directly from your browser. No need to download or install anything on your computer!
 
 ### 🎯 Benefits
 
 ✅ **No Download Required** - Work directly from your browser  
+✅ **Ready Environment** - Everything installed and configured automatically  
+✅ **Any Device** - Use from Windows, Mac, Linux, or even iPad  
+✅ **Free Tier** - Free hours per month for users  
+
+### 🆚 Codespaces vs Gitpod Comparison
+
+| Feature | GitHub Codespaces | Gitpod |
+|---------|-------------------|---------|
+| Free Hours | 60 hours/month | 50 hours/month |
+| Integration | Built into GitHub | Supports GitHub, GitLab, Bitbucket |
+| Speed | Very Fast | Fast |
+| Availability | GitHub accounts | Separate accounts |
+
+**Both are excellent - choose what works for you!**
+
+---
+
+## 📝 Getting Started with GitHub Codespaces
 ✅ **Ready Environment** - Everything installed and configured automatically  
 ✅ **Any Device** - Use from Windows, Mac, Linux, or even iPad  
 ✅ **Free Tier** - 60 free hours per month for users  
@@ -315,9 +376,10 @@ python launcher.py uploads/report.pdf --format all --title "Complete Report"
 
 ### 🐛 Troubleshooting
 
-**Issue: Codespace won't open**
-- Make sure you're logged into GitHub
+**Issue: Codespace/Gitpod won't open**
+- Make sure you're logged into GitHub/Gitpod
 - Try refreshing the page
+- Try the alternative environment
 
 **Issue: Commands don't work**
 - Make sure Terminal is open (press Ctrl+` to open it)
@@ -326,6 +388,33 @@ python launcher.py uploads/report.pdf --format all --title "Complete Report"
 **Issue: PDF file not read**
 - Make sure the file is uploaded to the `uploads/` folder
 - Make sure the PDF contains text and not just scanned images
+
+---
+
+## 📝 Getting Started with Gitpod
+
+### Step 1: Open Gitpod
+
+**Quick Way:**
+
+Click here directly:
+```
+https://gitpod.io/#https://github.com/aliabdelaal-adm/AWA_Awarness_2025
+```
+
+Or:
+
+1. Go to the repository page on GitHub
+2. Add `gitpod.io/#` before the repository URL in your browser
+3. Press Enter
+
+### Steps 2-6: Same as Codespaces
+
+The rest of the steps are exactly the same as Codespaces! Use the same commands and instructions.
+
+**Only Difference:**
+- Gitpod: Directory is `/workspace/AWA_Awarness_2025`
+- Codespaces: Directory is `/workspaces/AWA_Awarness_2025`
 
 ---
 

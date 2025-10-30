@@ -6,16 +6,20 @@
 ☁️  الطريقة الأسهل - استخدم المنصة مباشرة من المتصفح!
 ☁️  EASIEST WAY - Use the Platform Directly from Browser!
 
-🚀 GitHub Codespaces - لا حاجة للتحميل أو التثبيت!
-🚀 GitHub Codespaces - No Download or Installation Needed!
+🚀 لا حاجة للتحميل أو التثبيت! / No Download or Installation Needed!
 
-   اذهب إلى / Go to:
-   https://codespaces.new/aliabdelaal-adm/AWA_Awarness_2025
+   خياران / Two Options:
+   
+   1️⃣ GitHub Codespaces:
+      https://codespaces.new/aliabdelaal-adm/AWA_Awarness_2025
+      
+   2️⃣ Gitpod:
+      https://gitpod.io/#https://github.com/aliabdelaal-adm/AWA_Awarness_2025
    
    ✅ العمل مباشرة من المتصفح / Work directly from browser
    ✅ كل شيء مثبت تلقائياً / Everything installed automatically
    ✅ من أي جهاز (Windows, Mac, Linux, iPad) / From any device
-   ✅ مجاناً 60 ساعة شهرياً / Free 60 hours per month
+   ✅ ساعات مجانية شهرياً / Free hours per month
 
    📖 دليل الاستخدام: CODESPACES_GUIDE.md
    📖 User Guide: CODESPACES_GUIDE.md

@@ -5,6 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Flask](https://img.shields.io/badge/flask-3.1.2-green.svg)](https://flask.palletsprojects.com/)
 [![Open in GitHub Codespaces](https://img.shields.io/badge/Open%20in-Codespaces-blue?logo=github)](https://codespaces.new/aliabdelaal-adm/AWA_Awarness_2025)
+[![Open in Gitpod](https://img.shields.io/badge/Open%20in-Gitpod-orange?logo=gitpod)](https://gitpod.io/#https://github.com/aliabdelaal-adm/AWA_Awarness_2025)
 
 ---
 
@@ -12,10 +13,12 @@
 
 ### 🚀 **الطريقة الأسهل - بدون تحميل! / Easiest Way - No Download!**
 
-**لا تريد تحميل أو تثبيت أي شيء على جهازك؟ استخدم GitHub Codespaces!**  
-**Don't want to download or install anything? Use GitHub Codespaces!**
+**لا تريد تحميل أو تثبيت أي شيء على جهازك؟ استخدم بيئة سحابية!**  
+**Don't want to download or install anything? Use a cloud environment!**
 
 [![Open in GitHub Codespaces](https://img.shields.io/badge/🚀%20فتح%20في%20Codespaces-Open%20in%20Codespaces-success?style=for-the-badge&logo=github)](https://codespaces.new/aliabdelaal-adm/AWA_Awarness_2025)
+
+[![Open in Gitpod](https://img.shields.io/badge/🌐%20فتح%20في%20Gitpod-Open%20in%20Gitpod-orange?style=for-the-badge&logo=gitpod)](https://gitpod.io/#https://github.com/aliabdelaal-adm/AWA_Awarness_2025)
 
 **✨ المميزات:**
 - 🌐 العمل مباشرة من المتصفح - لا حاجة لتحميل أي شيء
