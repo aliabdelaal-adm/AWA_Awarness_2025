@@ -52,5 +52,6 @@ output/samples/
 !uploads/.gitkeep
 !output/videos/.gitkeep
 !output/audio/.gitkeep
+!output/presentations/.gitkeep
 !templates/video_templates/.gitkeep
 !examples/.gitkeep
