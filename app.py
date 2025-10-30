@@ -11,6 +11,7 @@ from flask import Flask, render_template, request, jsonify, send_file, url_for
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import yaml
+import re
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
@@ -47,6 +48,20 @@ except:
 def allowed_file(filename):
     """Check if file extension is allowed"""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def safe_join_path(base_dir, filename):
+    """Safely join paths preventing directory traversal attacks"""
+    # Remove any path separators from filename
+    filename = os.path.basename(filename)
+    # Remove any potentially dangerous characters
+    filename = re.sub(r'[^\w\s\-\.]', '', filename)
+    # Create the full path
+    filepath = os.path.join(base_dir, filename)
+    # Ensure the resulting path is within the base directory
+    if not os.path.abspath(filepath).startswith(os.path.abspath(base_dir)):
+        raise ValueError("Invalid file path")
+    return filepath
 
 
 @app.route('/')
@@ -125,7 +140,9 @@ def generate_presentation():
         return jsonify(result)
     
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        # Log the error but don't expose details to user
+        print(f"Error in generate_presentation: {e}")
+        return jsonify({'error': 'An error occurred during presentation generation. Please try again.'}), 500
 
 
 def generate_video_presentation(files, title, language):
@@ -134,7 +151,11 @@ def generate_video_presentation(files, title, language):
     
     # Extract content from files
     for filename in files:
-        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        try:
+            filepath = safe_join_path(UPLOAD_FOLDER, filename)
+        except ValueError:
+            print(f"Invalid file path: {filename}")
+            continue
         
         if not os.path.exists(filepath):
             continue
@@ -200,7 +221,11 @@ def generate_powerpoint_presentation(files, title, language):
         slides_content = []
         
         for filename in files:
-            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            try:
+                filepath = safe_join_path(UPLOAD_FOLDER, filename)
+            except ValueError:
+                print(f"Invalid file path: {filename}")
+                continue
             
             if not os.path.exists(filepath):
                 continue
@@ -275,21 +300,27 @@ def generate_powerpoint_presentation(files, title, language):
 @app.route('/download/<filename>')
 def download_video(filename):
     """Download generated video"""
-    filepath = os.path.join(OUTPUT_FOLDER, 'videos', filename)
-    if os.path.exists(filepath):
-        return send_file(filepath, as_attachment=True)
-    else:
-        return jsonify({'error': 'File not found'}), 404
+    try:
+        filepath = safe_join_path(os.path.join(OUTPUT_FOLDER, 'videos'), filename)
+        if os.path.exists(filepath):
+            return send_file(filepath, as_attachment=True)
+        else:
+            return jsonify({'error': 'File not found'}), 404
+    except (ValueError, Exception):
+        return jsonify({'error': 'Invalid file path'}), 400
 
 
 @app.route('/download-pptx/<filename>')
 def download_pptx(filename):
     """Download generated PowerPoint"""
-    filepath = os.path.join(OUTPUT_FOLDER, 'presentations', filename)
-    if os.path.exists(filepath):
-        return send_file(filepath, as_attachment=True)
-    else:
-        return jsonify({'error': 'File not found'}), 404
+    try:
+        filepath = safe_join_path(os.path.join(OUTPUT_FOLDER, 'presentations'), filename)
+        if os.path.exists(filepath):
+            return send_file(filepath, as_attachment=True)
+        else:
+            return jsonify({'error': 'File not found'}), 404
+    except (ValueError, Exception):
+        return jsonify({'error': 'Invalid file path'}), 400
 
 
 @app.route('/health')
@@ -308,4 +339,10 @@ if __name__ == '__main__':
     print("\nPress Ctrl+C to stop the server")
     print("="*60)
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Get debug mode from environment variable, default to False for security
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    
+    if debug_mode:
+        print("\n⚠️  WARNING: Running in DEBUG mode. Do NOT use in production!")
+    
+    app.run(debug=debug_mode, host='0.0.0.0', port=5000)
