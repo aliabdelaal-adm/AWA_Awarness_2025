@@ -46,11 +46,18 @@ output/audio/*.mp3
 output/audio/*.wav
 output/frames/
 output/samples/
+output/presentations/*.pptx
+output/reports/*.docx
+output/reports/*.pdf
+output/excel/*.xlsx
 *.log
 
 # Keep directory structure
 !uploads/.gitkeep
 !output/videos/.gitkeep
 !output/audio/.gitkeep
+!output/presentations/.gitkeep
+!output/reports/.gitkeep
+!output/excel/.gitkeep
 !templates/video_templates/.gitkeep
 !examples/.gitkeep
