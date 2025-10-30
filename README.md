@@ -4,12 +4,52 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Flask](https://img.shields.io/badge/flask-3.1.2-green.svg)](https://flask.palletsprojects.com/)
+[![Open in GitHub Codespaces](https://img.shields.io/badge/Open%20in-Codespaces-blue?logo=github)](https://codespaces.new/aliabdelaal-adm/AWA_Awarness_2025)
+
+---
+
+## ☁️ استخدم المنصة مباشرة من المتصفح! / Use Platform Directly from Browser!
+
+### 🚀 **الطريقة الأسهل - بدون تحميل! / Easiest Way - No Download!**
+
+**لا تريد تحميل أو تثبيت أي شيء على جهازك؟ استخدم GitHub Codespaces!**  
+**Don't want to download or install anything? Use GitHub Codespaces!**
+
+[![Open in GitHub Codespaces](https://img.shields.io/badge/🚀%20فتح%20في%20Codespaces-Open%20in%20Codespaces-success?style=for-the-badge&logo=github)](https://codespaces.new/aliabdelaal-adm/AWA_Awarness_2025)
+
+**✨ المميزات:**
+- 🌐 العمل مباشرة من المتصفح - لا حاجة لتحميل أي شيء
+- ⚡ بيئة جاهزة تماماً - كل شيء مثبت تلقائياً
+- 💻 من أي جهاز - Windows، Mac، Linux، أو حتى iPad
+- 🆓 مجاناً - 60 ساعة شهرياً للمستخدمين
+
+**✨ Features:**
+- 🌐 Work directly from browser - no download needed
+- ⚡ Fully ready environment - everything installed automatically  
+- 💻 From any device - Windows, Mac, Linux, or even iPad
+- 🆓 Free - 60 hours per month for users
+
+**📖 دليل الاستخدام الكامل:** [`CODESPACES_GUIDE.md`](CODESPACES_GUIDE.md)  
+**📖 Full Guide:** [`CODESPACES_GUIDE.md`](CODESPACES_GUIDE.md)
+
+**🎯 خطوات سريعة / Quick Steps:**
+1. انقر على الزر الأخضر أعلاه / Click the green button above
+2. انتظر دقيقة حتى يتم تجهيز البيئة / Wait a minute for environment setup
+3. اكتب `python app.py` لفتح الواجهة الويب / Type `python app.py` to open web interface
+4. ابدأ العمل فوراً! / Start working immediately!
 
 ---
 
 ## 🆕 للمبتدئين - ابدأ هنا! / For Beginners - Start Here!
 
 ### 🪟 مستخدمو ويندوز (Windows Users)
+
+**الطريقة الأسهل - استخدم من المتصفح مباشرة:**
+
+🚀 **[افتح في GitHub Codespaces](https://codespaces.new/aliabdelaal-adm/AWA_Awarness_2025)** - لا حاجة لتحميل أو تثبيت!  
+- دليل الاستخدام: [`CODESPACES_GUIDE.md`](CODESPACES_GUIDE.md)
+
+**أو للتثبيت على جهازك:**
 
 **إذا كنت لا تعرف كيف تبدأ، اتبع هذه الخطوات البسيطة:**
 
@@ -27,6 +67,13 @@
    - حلول سريعة للمشاكل الشائعة
 
 **If you don't know how to start, follow these simple steps:**
+
+**Easiest Way - Use from Browser:**
+
+🚀 **[Open in GitHub Codespaces](https://codespaces.new/aliabdelaal-adm/AWA_Awarness_2025)** - No download or installation needed!  
+- User Guide: [`CODESPACES_GUIDE.md`](CODESPACES_GUIDE.md)
+
+**Or to install on your computer:**
 
 1. **📖 Read the complete installation guide:** [`WINDOWS_SETUP_GUIDE.md`](WINDOWS_SETUP_GUIDE.md)
    - Comprehensive step-by-step guide from start to finish
