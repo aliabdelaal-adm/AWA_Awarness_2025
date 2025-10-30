@@ -3,6 +3,29 @@
   Welcome to AWA Content Generation Platform!
 ================================================================================
 
+☁️  الطريقة الأسهل - استخدم المنصة مباشرة من المتصفح!
+☁️  EASIEST WAY - Use the Platform Directly from Browser!
+
+🚀 لا حاجة للتحميل أو التثبيت! / No Download or Installation Needed!
+
+   خياران / Two Options:
+   
+   1️⃣ GitHub Codespaces:
+      https://codespaces.new/aliabdelaal-adm/AWA_Awarness_2025
+      
+   2️⃣ Gitpod:
+      https://gitpod.io/#https://github.com/aliabdelaal-adm/AWA_Awarness_2025
+   
+   ✅ العمل مباشرة من المتصفح / Work directly from browser
+   ✅ كل شيء مثبت تلقائياً / Everything installed automatically
+   ✅ من أي جهاز (Windows, Mac, Linux, iPad) / From any device
+   ✅ ساعات مجانية شهرياً / Free hours per month
+
+   📖 دليل الاستخدام: CODESPACES_GUIDE.md
+   📖 User Guide: CODESPACES_GUIDE.md
+
+================================================================================
+
 🎯 إذا كنت مستخدم ويندوز ولا تعرف كيف تبدأ:
 🎯 If you're a Windows user and don't know where to start:
 
