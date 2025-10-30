@@ -3,6 +3,18 @@
 
 ---
 
+## 🆕 للمبتدئين / For Beginners
+
+**🪟 إذا كنت مستخدم ويندوز ولا تعرف كيف تبدأ:**
+- راجع الدليل الكامل: [`WINDOWS_SETUP_GUIDE.md`](WINDOWS_SETUP_GUIDE.md)
+- يشرح كل شيء من البداية: تثبيت Python، Git، FFmpeg، وتشغيل المنصة
+
+**🪟 If you're a Windows user and don't know where to start:**
+- See the complete guide: [`WINDOWS_SETUP_GUIDE.md`](WINDOWS_SETUP_GUIDE.md)  
+- Explains everything from scratch: installing Python, Git, FFmpeg, and running the platform
+
+---
+
 ## English Version
 
 ### Overview

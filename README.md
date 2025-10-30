@@ -7,6 +7,42 @@
 
 ---
 
+## 🆕 للمبتدئين - ابدأ هنا! / For Beginners - Start Here!
+
+### 🪟 مستخدمو ويندوز (Windows Users)
+
+**إذا كنت لا تعرف كيف تبدأ، اتبع هذه الخطوات البسيطة:**
+
+1. **📖 اقرأ دليل التثبيت الكامل:** [`WINDOWS_SETUP_GUIDE.md`](WINDOWS_SETUP_GUIDE.md)
+   - دليل شامل خطوة بخطوة من البداية للنهاية
+   - يشرح كيفية تثبيت Python و Git و FFmpeg
+   - يشرح كيفية تحميل وتشغيل المنصة
+
+2. **⚡ للبدء السريع:** [`QUICK_START.md`](QUICK_START.md)
+   - شرح سريع لكيفية استخدام المنصة
+   - أمثلة عملية لتوليد المحتوى
+
+3. **📋 بطاقة مرجعية سريعة:** [`WINDOWS_QUICK_REFERENCE.md`](WINDOWS_QUICK_REFERENCE.md)
+   - أوامر سريعة وأمثلة جاهزة للاستخدام
+   - حلول سريعة للمشاكل الشائعة
+
+**If you don't know how to start, follow these simple steps:**
+
+1. **📖 Read the complete installation guide:** [`WINDOWS_SETUP_GUIDE.md`](WINDOWS_SETUP_GUIDE.md)
+   - Comprehensive step-by-step guide from start to finish
+   - Explains how to install Python, Git, and FFmpeg
+   - Explains how to download and run the platform
+
+2. **⚡ For quick start:** [`QUICK_START.md`](QUICK_START.md)
+   - Quick explanation of how to use the platform
+   - Practical examples for content generation
+
+3. **📋 Quick reference card:** [`WINDOWS_QUICK_REFERENCE.md`](WINDOWS_QUICK_REFERENCE.md)
+   - Quick commands and ready-to-use examples
+   - Quick solutions for common problems
+
+---
+
 ## 📖 English Documentation
 
 ### Overview
