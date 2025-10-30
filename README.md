@@ -1,8 +1,9 @@
-# 🎬 AWA AI Video Generation Tool
-# أداة AWA لتوليد الفيديوهات بالذكاء الاصطناعي
+# 🎬 AWA Presentation Design Platform
+# منصة AWA لتصميم العروض الإحترافية
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Flask](https://img.shields.io/badge/flask-3.1.2-green.svg)](https://flask.palletsprojects.com/)
 
 ---
 
@@ -10,12 +11,16 @@
 
 ### Overview
 
-The AWA AI Video Generation Tool is a professional, intelligent AI-powered application that automatically generates high-quality promotional, educational, and awareness videos from PDF documents. The tool leverages cutting-edge AI technologies for text-to-speech conversion and creates cinematic presentations perfect for marketing, advertising, and educational purposes.
+The AWA Presentation Design Platform is a professional, intelligent web-based application that allows you to design, prepare, and create innovative professional presentations in both video and PowerPoint formats. Upload your images, PDFs, documents, and data files, then generate stunning presentations with a single click. The platform combines cutting-edge AI technologies for text-to-speech conversion with professional presentation design capabilities.
 
 ### ✨ Key Features
 
+- 🌐 **Web-Based Interface**: Modern, easy-to-use web platform accessible from any browser
+- 📁 **Multi-File Upload**: Upload PDFs, images, text files, and documents
+- 🎬 **Dual Output Formats**: Generate both video presentations and PowerPoint files
 - 📄 **PDF Processing**: Automatically extract and structure content from PDF documents
 - 🎤 **AI Text-to-Speech**: Convert text to natural-sounding speech in Arabic and English
+ copilot/add-report-and-presentation-tools
 - 🎬 **Professional Video Generation**: Create polished video presentations with smooth transitions
 - 📊 **PowerPoint Presentations**: Generate professional PowerPoint slides automatically
 - 📄 **Word & PDF Reports**: Create formatted professional reports
@@ -26,6 +31,15 @@ The AWA AI Video Generation Tool is a professional, intelligent AI-powered appli
 - 🔊 **High-Quality Audio**: Natural-sounding voices using Edge TTS technology
 - 📊 **Smart Content Segmentation**: Automatically split content into digestible segments
 - 🚀 **Easy Launcher**: User-friendly interface to access all features
+
+- 🎥 **Professional Video Generation**: Create polished video presentations with smooth transitions
+- 📊 **PowerPoint Creation**: Generate professional .pptx presentations with custom layouts
+- 🌍 **Multi-language Support**: Full support for Arabic and English content
+- 🎨 **Customizable Templates**: Adjust presentation style, colors, fonts, and layouts
+- ⚡ **One-Click Generation**: Generate professional presentations with a single button click
+- 🔊 **High-Quality Audio**: Natural-sounding voices using Edge TTS technology
+- 📷 **Image Support**: Include images in your presentations seamlessly
+ main
 
 ### 🚀 Quick Start
 
@@ -55,6 +69,7 @@ pip install -r requirements.txt
 
 #### Basic Usage
 
+ copilot/add-report-and-presentation-tools
 **Launch the Interactive Platform**:
 ```bash
 # Windows
@@ -89,6 +104,23 @@ python launcher.py input.pdf --format all --title "Complete Package"
 ```
 
 **Original Video-Only Mode (Still Available)**:
+
+**Start the Web Platform** (Recommended):
+```bash
+# Linux/Mac
+./start_platform.sh
+
+# Windows
+start_platform.bat
+
+# Or directly with Python
+python app.py
+```
+
+Then open your browser and navigate to: **http://localhost:5000**
+
+**Command-Line Usage** (Alternative):
+ main
 ```bash
 python main.py path/to/your/document.pdf
 ```
@@ -109,6 +141,7 @@ python main.py input.pdf --output my_video.mp4 --title "My Awareness Video" --la
 
 ```
 AWA_Awarness_2025/
+ copilot/add-report-and-presentation-tools
 ├── launcher.py              # Main platform launcher (NEW!)
 ├── awa_launch.sh           # Quick launch script for macOS/Linux (NEW!)
 ├── awa_launch.bat          # Quick launch script for Windows (NEW!)
@@ -129,9 +162,29 @@ AWA_Awarness_2025/
 │   ├── presentations/    # PowerPoint files (NEW!)
 │   ├── reports/          # Word and PDF reports (NEW!)
 │   └── excel/            # Excel files (NEW!)
+├── app.py                   # Web application entry point
+├── main.py                  # Command-line application entry point
+├── config.yaml             # Configuration file
+├── requirements.txt        # Python dependencies
+├── start_platform.sh       # Linux/Mac startup script
+├── start_platform.bat      # Windows startup script
+├── src/
+│   └── modules/
+│       ├── pdf_processor.py          # PDF text extraction
+│       ├── text_to_speech.py         # TTS engine
+│       ├── video_generator.py        # Video creation
+│       └── presentation_builder.py   # PowerPoint generation
 ├── templates/
-│   └── video_templates/  # Video templates
-└── examples/             # Example files and documentation
+│   └── index.html          # Web interface
+├── uploads/                # Place your files here
+├── output/
+│   ├── videos/            # Generated videos
+│   ├── presentations/     # Generated PowerPoint files
+│   └── audio/             # Generated audio files
+ main
+├── templates/
+│   └── video_templates/   # Video templates
+└── examples/              # Example files and documentation
 ```
 
 ### ⚙️ Configuration
@@ -155,6 +208,7 @@ pdf:
 
 ### 💡 Use Cases
 
+ copilot/add-report-and-presentation-tools
 - **Marketing Videos & Presentations**: Convert product brochures to engaging video presentations and PowerPoint slides
 - **Educational Content**: Transform study materials into video lessons, presentations, and reports
 - **Awareness Campaigns**: Create public awareness videos and professional reports from informational PDFs
@@ -182,19 +236,49 @@ python launcher.py annual_data.pdf --format word --title "Annual Report 2024"
 ```
 
 #### Example 4: Arabic Awareness Video
+
+- **Web-Based Presentations**: Create presentations through an easy-to-use web interface
+- **Marketing Videos**: Convert product brochures to engaging video presentations
+- **PowerPoint Presentations**: Generate professional PowerPoint files from your content
+- **Educational Content**: Transform study materials into video lessons or slide presentations
+- **Awareness Campaigns**: Create public awareness videos from informational PDFs
+- **Training Materials**: Convert training documents to video tutorials or presentation slides
+- **Advertising**: Generate promotional videos from marketing content
+- **Multi-format Output**: Choose between video or PowerPoint based on your needs
+
+### 🎯 Examples
+
+#### Example 1: Using the Web Platform
+1. Run `./start_platform.sh` (or `start_platform.bat` on Windows)
+2. Open http://localhost:5000 in your browser
+3. Upload your files (PDFs, images, documents)
+4. Enter your presentation title
+5. Select output type (Video or PowerPoint)
+6. Click "إعداد العرض الإحترافي" (Generate Professional Presentation)
+7. Download your generated presentation
+
+#### Example 2: Arabic Video via Command Line
+ main
 ```bash
 python launcher.py awareness_guide.pdf --format video --title "دليل التوعية الصحية" --language ar
 ```
 
+ copilot/add-report-and-presentation-tools
 #### Example 5: English Marketing Video
+
+#### Example 3: English Marketing Video via Command Line
+ main
 ```bash
 python main.py product_brochure.pdf --title "Product Overview" --language en --output marketing_video.mp4
 ```
 
 ### 🔧 Advanced Features
 
-- **Custom Templates**: Modify video templates in `templates/video_templates/`
-- **Batch Processing**: Process multiple PDFs using a script
+- **Web Interface**: Modern responsive web UI for easy presentation creation
+- **Custom Templates**: Modify video and PowerPoint templates
+- **Batch Processing**: Process multiple files in a single presentation
+- **Dual Format Output**: Generate both video and PowerPoint presentations
+- **Image Integration**: Seamlessly include images in presentations
 - **API Integration**: Extend with OpenAI or other AI services for enhanced content
 
 ### 📊 System Requirements
@@ -221,12 +305,16 @@ python main.py product_brochure.pdf --title "Product Overview" --language en --o
 
 ### نظرة عامة
 
-أداة AWA لتوليد الفيديوهات بالذكاء الاصطناعي هي تطبيق احترافي وذكي يعمل على توليد فيديوهات دعائية وتعليمية وتوعوية عالية الجودة تلقائياً من مستندات PDF. تستخدم الأداة أحدث تقنيات الذكاء الاصطناعي لتحويل النص إلى كلام وإنشاء عروض سينمائية احترافية مثالية للتسويق والإعلان والأغراض التعليمية.
+منصة AWA لتصميم العروض الإحترافية هي تطبيق ويب احترافي وذكي يتيح لك تصميم وإعداد وإنشاء عروض تقديمية مبتكرة واحترافية بصيغة فيديو أو باور بوينت. قم برفع صورك، ملفات PDF، الوثائق والبيانات، ثم أنشئ عروض تقديمية مذهلة بنقرة واحدة. تجمع المنصة بين أحدث تقنيات الذكاء الاصطناعي لتحويل النص إلى كلام مع قدرات تصميم العروض الاحترافية.
 
 ### ✨ المميزات الرئيسية
 
+- 🌐 **واجهة ويب حديثة**: منصة ويب سهلة الاستخدام يمكن الوصول إليها من أي متصفح
+- 📁 **رفع ملفات متعددة**: رفع ملفات PDF، صور، نصوص، ووثائق
+- 🎬 **صيغتا إخراج**: توليد عروض فيديو وملفات باور بوينت
 - 📄 **معالجة PDF**: استخراج وهيكلة المحتوى تلقائياً من مستندات PDF
 - 🎤 **تحويل النص إلى كلام بالذكاء الاصطناعي**: تحويل النص إلى صوت طبيعي بالعربية والإنجليزية
+ copilot/add-report-and-presentation-tools
 - 🎬 **توليد فيديو احترافي**: إنشاء عروض فيديو مصقولة مع انتقالات سلسة
 - 📊 **عروض PowerPoint**: توليد شرائح PowerPoint احترافية تلقائياً
 - 📄 **تقارير Word و PDF**: إنشاء تقارير احترافية منسقة
@@ -237,6 +325,15 @@ python main.py product_brochure.pdf --title "Product Overview" --language en --o
 - 🔊 **صوت عالي الجودة**: أصوات طبيعية باستخدام تقنية Edge TTS
 - 📊 **تقسيم ذكي للمحتوى**: تقسيم المحتوى تلقائياً إلى أجزاء سهلة الفهم
 - 🚀 **أداة إطلاق سهلة**: واجهة سهلة الاستخدام للوصول إلى جميع الميزات
+
+- 🎥 **توليد فيديو احترافي**: إنشاء عروض فيديو مصقولة مع انتقالات سلسة
+- 📊 **إنشاء عروض باور بوينت**: توليد عروض .pptx احترافية بتخطيطات مخصصة
+- 🌍 **دعم متعدد اللغات**: دعم كامل للمحتوى العربي والإنجليزي
+- 🎨 **قوالب قابلة للتخصيص**: ضبط نمط العرض والألوان والخطوط والتخطيطات
+- ⚡ **توليد بنقرة واحدة**: إنشاء عروض احترافية بضغطة زر واحدة
+- 🔊 **صوت عالي الجودة**: أصوات طبيعية باستخدام تقنية Edge TTS
+- 📷 **دعم الصور**: إدراج الصور في عروضك بسلاسة
+ main
 
 ### 🚀 البدء السريع
 
@@ -266,6 +363,7 @@ pip install -r requirements.txt
 
 #### الاستخدام الأساسي
 
+ copilot/add-report-and-presentation-tools
 **تشغيل المنصة التفاعلية**:
 ```bash
 # ويندوز
@@ -300,6 +398,23 @@ python launcher.py input.pdf --format all --title "الحزمة الكاملة"
 ```
 
 **وضع الفيديو الأصلي (لا يزال متاحاً)**:
+
+**بدء منصة الويب** (مستحسن):
+```bash
+# Linux/Mac
+./start_platform.sh
+
+# Windows
+start_platform.bat
+
+# أو مباشرة مع Python
+python app.py
+```
+
+ثم افتح متصفحك وانتقل إلى: **http://localhost:5000**
+
+**الاستخدام من سطر الأوامر** (بديل):
+ main
 ```bash
 python main.py path/to/your/document.pdf
 ```
@@ -358,6 +473,7 @@ pdf:
 
 ### 💡 حالات الاستخدام
 
+ copilot/add-report-and-presentation-tools
 - **فيديوهات وعروض تسويقية**: تحويل كتيبات المنتجات إلى عروض فيديو جذابة وشرائح PowerPoint
 - **محتوى تعليمي**: تحويل المواد الدراسية إلى دروس فيديو وعروض تقديمية وتقارير
 - **حملات توعية**: إنشاء فيديوهات توعية عامة وتقارير احترافية من ملفات PDF معلوماتية
@@ -385,19 +501,49 @@ python launcher.py البيانات_السنوية.pdf --format word --title "ا
 ```
 
 #### مثال 4: فيديو توعوي بالعربية
+=======
+- **عروض تقديمية عبر الويب**: إنشاء عروض من خلال واجهة ويب سهلة الاستخدام
+- **فيديوهات تسويقية**: تحويل كتيبات المنتجات إلى عروض فيديو جذابة
+- **عروض باور بوينت**: توليد ملفات PowerPoint احترافية من محتواك
+- **محتوى تعليمي**: تحويل المواد الدراسية إلى دروس فيديو أو عروض شرائح
+- **حملات توعية**: إنشاء فيديوهات توعية عامة من ملفات PDF معلوماتية
+- **مواد تدريبية**: تحويل وثائق التدريب إلى دروس فيديو أو شرائح عرض
+- **إعلانات**: توليد فيديوهات ترويجية من محتوى تسويقي
+- **إخراج متعدد الصيغ**: اختيار بين الفيديو أو باور بوينت حسب احتياجاتك
+
+### 🎯 أمثلة
+
+#### مثال 1: استخدام منصة الويب
+1. شغّل `./start_platform.sh` (أو `start_platform.bat` على Windows)
+2. افتح http://localhost:5000 في المتصفح
+3. ارفع ملفاتك (PDFs، صور، وثائق)
+4. أدخل عنوان العرض
+5. اختر نوع الإخراج (فيديو أو باور بوينت)
+6. انقر "إعداد العرض الإحترافي"
+7. حمّل عرضك المُنشأ
+
+#### مثال 2: فيديو توعوي بالعربية عبر سطر الأوامر
+ main
 ```bash
 python launcher.py دليل_التوعية.pdf --format video --title "دليل التوعية الصحية" --language ar
 ```
 
+ copilot/add-report-and-presentation-tools
 #### مثال 5: فيديو تسويقي بالإنجليزية
+
+#### مثال 3: فيديو تسويقي بالإنجليزية عبر سطر الأوامر
+ main
 ```bash
 python main.py product_brochure.pdf --title "Product Overview" --language en --output marketing_video.mp4
 ```
 
 ### 🔧 الميزات المتقدمة
 
-- **قوالب مخصصة**: تعديل قوالب الفيديو في `templates/video_templates/`
-- **معالجة جماعية**: معالجة عدة ملفات PDF باستخدام سكريبت
+- **واجهة ويب**: واجهة ويب حديثة ومتجاوبة لإنشاء العروض بسهولة
+- **قوالب مخصصة**: تعديل قوالب الفيديو وباور بوينت
+- **معالجة جماعية**: معالجة عدة ملفات في عرض واحد
+- **إخراج مزدوج الصيغة**: توليد عروض فيديو وباور بوينت
+- **دمج الصور**: إدراج الصور في العروض بسلاسة
 - **تكامل API**: التوسع مع OpenAI أو خدمات AI أخرى لتحسين المحتوى
 
 ### 📊 متطلبات النظام

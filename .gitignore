@@ -57,7 +57,10 @@ output/excel/*.xlsx
 !output/videos/.gitkeep
 !output/audio/.gitkeep
 !output/presentations/.gitkeep
+ copilot/add-report-and-presentation-tools
 !output/reports/.gitkeep
 !output/excel/.gitkeep
+
+ main
 !templates/video_templates/.gitkeep
 !examples/.gitkeep
