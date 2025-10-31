@@ -20,6 +20,8 @@ from modules.pdf_processor import PDFProcessor
 from modules.text_to_speech import TextToSpeech
 from modules.video_generator import VideoGenerator
 from modules.presentation_builder import PresentationBuilder
+from modules.excel_generator import ExcelGenerator
+from modules.report_generator import ReportGenerator
 
 app = Flask(__name__)
 CORS(app)
@@ -36,6 +38,8 @@ app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(os.path.join(OUTPUT_FOLDER, 'videos'), exist_ok=True)
 os.makedirs(os.path.join(OUTPUT_FOLDER, 'presentations'), exist_ok=True)
+os.makedirs(os.path.join(OUTPUT_FOLDER, 'excel'), exist_ok=True)
+os.makedirs(os.path.join(OUTPUT_FOLDER, 'reports'), exist_ok=True)
 
 # Load configuration
 try:
@@ -123,25 +127,36 @@ def generate_presentation():
     """Generate professional presentation/video"""
     try:
         data = request.json
-        output_type = data.get('output_type', 'video')  # 'video' or 'powerpoint'
+        output_type = data.get('output_type', 'video')  # 'video', 'powerpoint', 'excel', 'word', 'pdf'
         title = data.get('title', 'عرض إحترافي')
         language = data.get('language', 'ar')
         selected_files = data.get('files', [])
+        max_slides = data.get('max_slides', None)  # Optional slide limit
         
         if not selected_files:
             return jsonify({'error': 'No files selected'}), 400
         
-        # Process files and generate presentation
+        # Process files and generate presentation based on output type
         if output_type == 'video':
             result = generate_video_presentation(selected_files, title, language)
+        elif output_type == 'powerpoint':
+            result = generate_powerpoint_presentation(selected_files, title, language, max_slides)
+        elif output_type == 'excel':
+            result = generate_excel_output(selected_files, title, language)
+        elif output_type == 'word':
+            result = generate_word_output(selected_files, title, language)
+        elif output_type == 'pdf':
+            result = generate_pdf_output(selected_files, title, language)
         else:
-            result = generate_powerpoint_presentation(selected_files, title, language)
+            return jsonify({'error': f'Unsupported output type: {output_type}'}), 400
         
         return jsonify(result)
     
     except Exception as e:
         # Log the error but don't expose details to user
         print(f"Error in generate_presentation: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': 'An error occurred during presentation generation. Please try again.'}), 500
 
 
@@ -212,7 +227,7 @@ def generate_video_presentation(files, title, language):
         return {'error': 'Failed to generate video'}
 
 
-def generate_powerpoint_presentation(files, title, language):
+def generate_powerpoint_presentation(files, title, language, max_slides=None):
     """Generate PowerPoint presentation from files"""
     try:
         presentation_builder = PresentationBuilder()
@@ -237,7 +252,7 @@ def generate_powerpoint_presentation(files, title, language):
                     chunks = pdf_processor.split_into_chunks(500)
                     for chunk in chunks:
                         slides_content.append({
-                            'title': f'Slide {len(slides_content) + 1}',
+                            'title': f'القسم {len(slides_content) + 1}' if language == 'ar' else f'Section {len(slides_content) + 1}',
                             'content': chunk,
                             'source': filename
                         })
@@ -252,7 +267,7 @@ def generate_powerpoint_presentation(files, title, language):
                         chunks = [content[i:i+500] for i in range(0, len(content), 500)]
                         for chunk in chunks:
                             slides_content.append({
-                                'title': f'Slide {len(slides_content) + 1}',
+                                'title': f'القسم {len(slides_content) + 1}' if language == 'ar' else f'Section {len(slides_content) + 1}',
                                 'content': chunk,
                                 'source': filename
                             })
@@ -262,7 +277,7 @@ def generate_powerpoint_presentation(files, title, language):
             # Process images
             elif filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
                 slides_content.append({
-                    'title': f'Image: {filename}',
+                    'title': f'صورة: {filename}' if language == 'ar' else f'Image: {filename}',
                     'content': '',
                     'image_path': filepath,
                     'source': filename
@@ -271,7 +286,7 @@ def generate_powerpoint_presentation(files, title, language):
         if not slides_content:
             return {'error': 'No content extracted from files'}
         
-        # Generate PowerPoint
+        # Generate PowerPoint with max_slides limit
         output_filename = f"{title.replace(' ', '_')}_presentation.pptx"
         output_path = os.path.join(OUTPUT_FOLDER, 'presentations', output_filename)
         
@@ -279,7 +294,8 @@ def generate_powerpoint_presentation(files, title, language):
             title=title,
             slides=slides_content,
             output_path=output_path,
-            language=language
+            language=language,
+            max_slides=max_slides
         )
         
         if pptx_path:
@@ -288,13 +304,224 @@ def generate_powerpoint_presentation(files, title, language):
                 'output_type': 'powerpoint',
                 'output_path': pptx_path,
                 'filename': output_filename,
+                'slides_count': len(slides_content),
                 'download_url': f'/download-pptx/{output_filename}'
             }
         else:
             return {'error': 'Failed to generate PowerPoint'}
     
     except Exception as e:
+        print(f"Error in generate_powerpoint_presentation: {e}")
+        import traceback
+        traceback.print_exc()
         return {'error': f'Error generating PowerPoint: {str(e)}'}
+
+
+def generate_excel_output(files, title, language):
+    """Generate Excel spreadsheet from files"""
+    try:
+        excel_generator = ExcelGenerator()
+        
+        # Extract content from files
+        text_chunks = []
+        
+        for filename in files:
+            try:
+                filepath = safe_join_path(UPLOAD_FOLDER, filename)
+            except ValueError:
+                print(f"Invalid file path: {filename}")
+                continue
+            
+            if not os.path.exists(filepath):
+                continue
+            
+            # Process PDF files
+            if filename.lower().endswith('.pdf'):
+                try:
+                    pdf_processor = PDFProcessor(filepath)
+                    chunks = pdf_processor.split_into_chunks(500)
+                    text_chunks.extend(chunks)
+                except Exception as e:
+                    print(f"Error processing PDF {filename}: {e}")
+            
+            # Process text files
+            elif filename.lower().endswith('.txt'):
+                try:
+                    with open(filepath, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                        chunks = [content[i:i+500] for i in range(0, len(content), 500)]
+                        text_chunks.extend(chunks)
+                except Exception as e:
+                    print(f"Error processing text file {filename}: {e}")
+        
+        if not text_chunks:
+            return {'error': 'No content extracted from files'}
+        
+        # Generate Excel file
+        output_filename = f"{title.replace(' ', '_')}_data.xlsx"
+        output_path = os.path.join(OUTPUT_FOLDER, 'excel', output_filename)
+        os.makedirs(os.path.join(OUTPUT_FOLDER, 'excel'), exist_ok=True)
+        
+        excel_path = excel_generator.generate_from_chunks(
+            text_chunks=text_chunks,
+            title=title,
+            output_path=output_path
+        )
+        
+        if excel_path:
+            return {
+                'success': True,
+                'output_type': 'excel',
+                'output_path': excel_path,
+                'filename': output_filename,
+                'download_url': f'/download-excel/{output_filename}'
+            }
+        else:
+            return {'error': 'Failed to generate Excel file'}
+    
+    except Exception as e:
+        print(f"Error in generate_excel_output: {e}")
+        import traceback
+        traceback.print_exc()
+        return {'error': f'Error generating Excel: {str(e)}'}
+
+
+def generate_word_output(files, title, language):
+    """Generate Word document from files"""
+    try:
+        report_generator = ReportGenerator()
+        
+        # Extract content from files
+        text_chunks = []
+        
+        for filename in files:
+            try:
+                filepath = safe_join_path(UPLOAD_FOLDER, filename)
+            except ValueError:
+                print(f"Invalid file path: {filename}")
+                continue
+            
+            if not os.path.exists(filepath):
+                continue
+            
+            # Process PDF files
+            if filename.lower().endswith('.pdf'):
+                try:
+                    pdf_processor = PDFProcessor(filepath)
+                    chunks = pdf_processor.split_into_chunks(500)
+                    text_chunks.extend(chunks)
+                except Exception as e:
+                    print(f"Error processing PDF {filename}: {e}")
+            
+            # Process text files
+            elif filename.lower().endswith('.txt'):
+                try:
+                    with open(filepath, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                        chunks = [content[i:i+500] for i in range(0, len(content), 500)]
+                        text_chunks.extend(chunks)
+                except Exception as e:
+                    print(f"Error processing text file {filename}: {e}")
+        
+        if not text_chunks:
+            return {'error': 'No content extracted from files'}
+        
+        # Generate Word document
+        output_filename = f"{title.replace(' ', '_')}_report.docx"
+        output_path = os.path.join(OUTPUT_FOLDER, 'reports', output_filename)
+        
+        word_path = report_generator.generate_word_report(
+            text_chunks=text_chunks,
+            title=title,
+            subtitle='تقرير إحترافي' if language == 'ar' else 'Professional Report',
+            output_path=output_path
+        )
+        
+        if word_path:
+            return {
+                'success': True,
+                'output_type': 'word',
+                'output_path': word_path,
+                'filename': output_filename,
+                'download_url': f'/download-word/{output_filename}'
+            }
+        else:
+            return {'error': 'Failed to generate Word document'}
+    
+    except Exception as e:
+        print(f"Error in generate_word_output: {e}")
+        import traceback
+        traceback.print_exc()
+        return {'error': f'Error generating Word document: {str(e)}'}
+
+
+def generate_pdf_output(files, title, language):
+    """Generate PDF report from files"""
+    try:
+        report_generator = ReportGenerator()
+        
+        # Extract content from files
+        text_chunks = []
+        
+        for filename in files:
+            try:
+                filepath = safe_join_path(UPLOAD_FOLDER, filename)
+            except ValueError:
+                print(f"Invalid file path: {filename}")
+                continue
+            
+            if not os.path.exists(filepath):
+                continue
+            
+            # Process PDF files
+            if filename.lower().endswith('.pdf'):
+                try:
+                    pdf_processor = PDFProcessor(filepath)
+                    chunks = pdf_processor.split_into_chunks(500)
+                    text_chunks.extend(chunks)
+                except Exception as e:
+                    print(f"Error processing PDF {filename}: {e}")
+            
+            # Process text files
+            elif filename.lower().endswith('.txt'):
+                try:
+                    with open(filepath, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                        chunks = [content[i:i+500] for i in range(0, len(content), 500)]
+                        text_chunks.extend(chunks)
+                except Exception as e:
+                    print(f"Error processing text file {filename}: {e}")
+        
+        if not text_chunks:
+            return {'error': 'No content extracted from files'}
+        
+        # Generate PDF report
+        output_filename = f"{title.replace(' ', '_')}_report.pdf"
+        output_path = os.path.join(OUTPUT_FOLDER, 'reports', output_filename)
+        
+        pdf_path = report_generator.generate_pdf_report(
+            text_chunks=text_chunks,
+            title=title,
+            subtitle='تقرير إحترافي' if language == 'ar' else 'Professional Report',
+            output_path=output_path
+        )
+        
+        if pdf_path:
+            return {
+                'success': True,
+                'output_type': 'pdf',
+                'output_path': pdf_path,
+                'filename': output_filename,
+                'download_url': f'/download-pdf/{output_filename}'
+            }
+        else:
+            return {'error': 'Failed to generate PDF report'}
+    
+    except Exception as e:
+        print(f"Error in generate_pdf_output: {e}")
+        import traceback
+        traceback.print_exc()
+        return {'error': f'Error generating PDF report: {str(e)}'}
 
 
 @app.route('/download/<filename>')
@@ -315,6 +542,45 @@ def download_pptx(filename):
     """Download generated PowerPoint"""
     try:
         filepath = safe_join_path(os.path.join(OUTPUT_FOLDER, 'presentations'), filename)
+        if os.path.exists(filepath):
+            return send_file(filepath, as_attachment=True)
+        else:
+            return jsonify({'error': 'File not found'}), 404
+    except (ValueError, Exception):
+        return jsonify({'error': 'Invalid file path'}), 400
+
+
+@app.route('/download-excel/<filename>')
+def download_excel(filename):
+    """Download generated Excel file"""
+    try:
+        filepath = safe_join_path(os.path.join(OUTPUT_FOLDER, 'excel'), filename)
+        if os.path.exists(filepath):
+            return send_file(filepath, as_attachment=True)
+        else:
+            return jsonify({'error': 'File not found'}), 404
+    except (ValueError, Exception):
+        return jsonify({'error': 'Invalid file path'}), 400
+
+
+@app.route('/download-word/<filename>')
+def download_word(filename):
+    """Download generated Word document"""
+    try:
+        filepath = safe_join_path(os.path.join(OUTPUT_FOLDER, 'reports'), filename)
+        if os.path.exists(filepath):
+            return send_file(filepath, as_attachment=True)
+        else:
+            return jsonify({'error': 'File not found'}), 404
+    except (ValueError, Exception):
+        return jsonify({'error': 'Invalid file path'}), 400
+
+
+@app.route('/download-pdf/<filename>')
+def download_pdf(filename):
+    """Download generated PDF report"""
+    try:
+        filepath = safe_join_path(os.path.join(OUTPUT_FOLDER, 'reports'), filename)
         if os.path.exists(filepath):
             return send_file(filepath, as_attachment=True)
         else:

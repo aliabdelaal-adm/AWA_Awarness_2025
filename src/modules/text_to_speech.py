@@ -95,6 +95,11 @@ class TextToSpeech:
         Returns:
             Path to generated audio file
         """
+        # Skip empty text
+        if not text or not text.strip():
+            print(f"Warning: Empty text provided for {output_filename}")
+            return None
+        
         if use_edge:
             try:
                 return asyncio.run(self.generate_speech_edge(text, output_filename))
@@ -120,12 +125,27 @@ class TextToSpeech:
         audio_files = []
         
         for i, text in enumerate(texts):
-            filename = f"{prefix}_{i+1:03d}"
-            audio_path = self.generate_speech(text, filename, use_edge)
+            if not text or not text.strip():
+                print(f"Warning: Skipping empty text at index {i}")
+                continue
             
-            if audio_path:
-                audio_files.append(audio_path)
+            filename = f"{prefix}_{i+1:03d}"
+            try:
+                audio_path = self.generate_speech(text, filename, use_edge)
+                
+                if audio_path and os.path.exists(audio_path):
+                    # Verify file is not empty
+                    if os.path.getsize(audio_path) > 0:
+                        audio_files.append(audio_path)
+                    else:
+                        print(f"Warning: Generated empty audio file: {audio_path}")
+                else:
+                    print(f"Warning: Failed to generate audio for text {i+1}")
+            except Exception as e:
+                print(f"Error generating audio {i+1}: {e}")
+                continue
         
+        print(f"Successfully generated {len(audio_files)} audio files out of {len(texts)} texts")
         return audio_files
     
     @staticmethod
