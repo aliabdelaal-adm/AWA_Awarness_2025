@@ -170,17 +170,17 @@ class VideoGenerator:
         clips.append(title_slide)
         
         # Verify audio files exist and are valid
-        valid_pairs = []
+        text_audio_pairs = []
         for i, (text, audio_path) in enumerate(zip(text_chunks, audio_files)):
             if os.path.exists(audio_path) and os.path.getsize(audio_path) > 0:
-                valid_pairs.append((text, audio_path))
+                text_audio_pairs.append((text, audio_path))
             else:
                 print(f"Warning: Audio file missing or empty: {audio_path}")
                 # Create slide with default duration if audio is missing
-                valid_pairs.append((text, None))
+                text_audio_pairs.append((text, None))
         
         # Create slides for each text chunk with corresponding audio
-        for i, (text, audio_path) in enumerate(valid_pairs):
+        for i, (text, audio_path) in enumerate(text_audio_pairs):
             try:
                 if audio_path:
                     # Get audio duration

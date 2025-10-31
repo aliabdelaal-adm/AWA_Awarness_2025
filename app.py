@@ -525,7 +525,6 @@ def generate_pdf_output(files, title, language):
 
 
 @app.route('/download/<filename>')
-
 def download_video(filename):
     """Download generated video"""
     try:

@@ -118,6 +118,11 @@ class PresentationBuilder:
         """
         Intelligently merge slides to reduce total count
         
+        The algorithm works by:
+        1. Calculating a merge ratio (original_slides / target_slides)
+        2. Grouping slides based on this ratio
+        3. Combining text content while preserving image slides separately
+        
         Args:
             slides: Original list of slides
             max_slides: Maximum number of slides desired
@@ -128,13 +133,14 @@ class PresentationBuilder:
         if len(slides) <= max_slides:
             return slides
         
-        # Calculate how many slides to merge together
+        # Calculate how many original slides should be merged into each result slide
         merge_ratio = len(slides) / max_slides
         merged_slides = []
         
         i = 0
         while i < len(slides) and len(merged_slides) < max_slides:
-            # Determine how many slides to merge
+            # Determine how many slides to merge in this iteration
+            # Use merge_ratio for most slides, but ensure we process all remaining slides in the last iteration
             slides_to_merge = int(merge_ratio) if len(merged_slides) < max_slides - 1 else len(slides) - i
             slides_to_merge = max(1, min(slides_to_merge, len(slides) - i))
             

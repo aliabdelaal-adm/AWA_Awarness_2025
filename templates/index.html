@@ -594,7 +594,7 @@
             const language = document.getElementById('presentationLanguage').value;
             const outputType = document.getElementById('outputType').value;
             const maxSlidesInput = document.getElementById('maxSlides');
-            const maxSlides = maxSlidesInput.value ? parseInt(maxSlidesInput.value) : null;
+            const maxSlides = maxSlidesInput.value ? parseInt(maxSlidesInput.value, 10) : null;
             
             const generateBtn = document.getElementById('generateBtn');
             const loadingDiv = document.getElementById('loadingDiv');
