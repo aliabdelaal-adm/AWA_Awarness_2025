@@ -7,6 +7,7 @@ import os
 import sys
 import json
 import html
+import re
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, send_file, url_for
 from flask_cors import CORS
@@ -54,6 +55,49 @@ except:
 def allowed_file(filename):
     """Check if file extension is allowed"""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def smart_chunk_text(text, chunk_size=NOTES_CHUNK_SIZE):
+    """
+    Split text into chunks while trying to preserve sentence boundaries.
+    Falls back to word boundaries if sentences are too long.
+    """
+    chunks = []
+    
+    # Try to split by sentences first (. ! ? followed by space or end)
+    sentences = re.split(r'([.!?]\s+|[.!?]$)', text)
+    current_chunk = ""
+    
+    for i in range(0, len(sentences), 2):
+        sentence = sentences[i] if i < len(sentences) else ""
+        delimiter = sentences[i + 1] if i + 1 < len(sentences) else ""
+        full_sentence = sentence + delimiter
+        
+        # If adding this sentence would exceed chunk size
+        if len(current_chunk) + len(full_sentence) > chunk_size:
+            if current_chunk:
+                chunks.append(current_chunk.strip())
+                current_chunk = ""
+            
+            # If single sentence is longer than chunk size, split by words
+            if len(full_sentence) > chunk_size:
+                words = full_sentence.split()
+                for word in words:
+                    if len(current_chunk) + len(word) + 1 > chunk_size:
+                        if current_chunk:
+                            chunks.append(current_chunk.strip())
+                        current_chunk = word + " "
+                    else:
+                        current_chunk += word + " "
+            else:
+                current_chunk = full_sentence
+        else:
+            current_chunk += full_sentence
+    
+    if current_chunk.strip():
+        chunks.append(current_chunk.strip())
+    
+    return chunks
 
 
 def safe_join_path(base_dir, filename):
@@ -140,7 +184,12 @@ def generate_presentation():
             clarification_notes = clarification_notes.strip()
             # Check length limit
             if len(clarification_notes) > MAX_NOTES_LENGTH:
-                return jsonify({'error': f'Clarification notes too long. Maximum {MAX_NOTES_LENGTH} characters allowed.'}), 400
+                error_msg = (
+                    f'الملاحظات طويلة جداً. الحد الأقصى {MAX_NOTES_LENGTH} حرف.' 
+                    if language == 'ar' 
+                    else f'Clarification notes too long. Maximum {MAX_NOTES_LENGTH} characters allowed.'
+                )
+                return jsonify({'error': error_msg}), 400
             # Sanitize HTML to prevent XSS attacks
             clarification_notes = html.escape(clarification_notes)
         
@@ -171,9 +220,8 @@ def generate_video_presentation(files, title, language, clarification_notes=''):
         notes_prefix = "ملاحظات توضيحية: " if language == 'ar' else "Clarification Notes: "
         notes_text = notes_prefix + clarification_notes
         
-        # Split into manageable chunks using the configured chunk size
-        for i in range(0, len(notes_text), NOTES_CHUNK_SIZE):
-            text_chunks.append(notes_text[i:i+NOTES_CHUNK_SIZE])
+        # Use smart chunking to preserve sentence/word boundaries
+        text_chunks.extend(smart_chunk_text(notes_text, NOTES_CHUNK_SIZE))
     
     # Extract content from files
     for filename in files:
