@@ -28,6 +28,7 @@ CORS(app)
 UPLOAD_FOLDER = 'uploads'
 OUTPUT_FOLDER = 'output'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif', 'txt', 'doc', 'docx', 'xlsx', 'csv'}
+NOTES_CHUNK_SIZE = 300  # Maximum characters per chunk for clarification notes
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
@@ -152,11 +153,14 @@ def generate_video_presentation(files, title, language, clarification_notes=''):
     
     # Add clarification notes as the first chunk if provided
     if clarification_notes and clarification_notes.strip():
-        # Split clarification notes into chunks if it's very long
-        notes_text = f"ملاحظات توضيحية: {clarification_notes}" if language == 'ar' else f"Clarification Notes: {clarification_notes}"
-        # Split into manageable chunks (300 chars each)
-        for i in range(0, len(notes_text), 300):
-            text_chunks.append(notes_text[i:i+300])
+        # Sanitize and prepare clarification notes text
+        clarification_notes = clarification_notes.strip()
+        notes_prefix = "ملاحظات توضيحية: " if language == 'ar' else "Clarification Notes: "
+        notes_text = notes_prefix + clarification_notes
+        
+        # Split into manageable chunks using the configured chunk size
+        for i in range(0, len(notes_text), NOTES_CHUNK_SIZE):
+            text_chunks.append(notes_text[i:i+NOTES_CHUNK_SIZE])
     
     # Extract content from files
     for filename in files:
@@ -231,8 +235,12 @@ def generate_powerpoint_presentation(files, title, language, clarification_notes
         
         # Add clarification notes as the first slide if provided
         if clarification_notes and clarification_notes.strip():
+            # Sanitize the notes
+            clarification_notes = clarification_notes.strip()
+            notes_title = 'ملاحظات توضيحية' if language == 'ar' else 'Clarification Notes'
+            
             slides_content.append({
-                'title': 'ملاحظات توضيحية' if language == 'ar' else 'Clarification Notes',
+                'title': notes_title,
                 'content': clarification_notes,
                 'source': 'user_input'
             })
