@@ -8,6 +8,7 @@ import sys
 import json
 import html
 import re
+import time
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, send_file, url_for
 from flask_cors import CORS
@@ -304,6 +305,10 @@ def generate_video_presentation(files, title, language, clarification_notes=''):
         return {'error': 'Failed to generate video'}
 
 
+ copilot/add-index-html-for-awa-platform
+
+
+ main
 def generate_powerpoint_presentation(files, title, language, clarification_notes='', max_slides=None):
     """Generate PowerPoint presentation from files"""
     try:
@@ -717,6 +722,301 @@ def admin_dashboard():
 def health():
     """Health check endpoint"""
     return jsonify({'status': 'ok', 'service': 'AWA Presentation Platform'})
+
+
+@app.route('/stats')
+def get_stats():
+    """Get platform statistics"""
+    try:
+        stats = {
+            'total_files': 0,
+            'videos_count': 0,
+            'presentations_count': 0,
+            'reports_count': 0,
+            'excel_count': 0,
+            'total_size': 0
+        }
+        
+        # Count uploaded files
+        if os.path.exists(UPLOAD_FOLDER):
+            for filename in os.listdir(UPLOAD_FOLDER):
+                if filename != '.gitkeep':
+                    filepath = os.path.join(UPLOAD_FOLDER, filename)
+                    if os.path.isfile(filepath):
+                        stats['total_files'] += 1
+                        stats['total_size'] += os.path.getsize(filepath)
+        
+        # Count videos
+        videos_dir = os.path.join(OUTPUT_FOLDER, 'videos')
+        if os.path.exists(videos_dir):
+            for filename in os.listdir(videos_dir):
+                if filename.endswith('.mp4'):
+                    stats['videos_count'] += 1
+                    filepath = os.path.join(videos_dir, filename)
+                    stats['total_size'] += os.path.getsize(filepath)
+        
+        # Count presentations
+        pptx_dir = os.path.join(OUTPUT_FOLDER, 'presentations')
+        if os.path.exists(pptx_dir):
+            for filename in os.listdir(pptx_dir):
+                if filename.endswith('.pptx'):
+                    stats['presentations_count'] += 1
+                    filepath = os.path.join(pptx_dir, filename)
+                    stats['total_size'] += os.path.getsize(filepath)
+        
+        # Count reports
+        reports_dir = os.path.join(OUTPUT_FOLDER, 'reports')
+        if os.path.exists(reports_dir):
+            for filename in os.listdir(reports_dir):
+                if filename.endswith(('.docx', '.pdf')):
+                    stats['reports_count'] += 1
+                    filepath = os.path.join(reports_dir, filename)
+                    stats['total_size'] += os.path.getsize(filepath)
+        
+        # Count Excel files
+        excel_dir = os.path.join(OUTPUT_FOLDER, 'excel')
+        if os.path.exists(excel_dir):
+            for filename in os.listdir(excel_dir):
+                if filename.endswith('.xlsx'):
+                    stats['excel_count'] += 1
+                    filepath = os.path.join(excel_dir, filename)
+                    stats['total_size'] += os.path.getsize(filepath)
+        
+        return jsonify({'success': True, **stats})
+    
+    except Exception as e:
+        print(f"Error getting stats: {e}")
+        return jsonify({'success': False, 'error': 'Failed to retrieve statistics'}), 500
+
+
+@app.route('/list-outputs')
+def list_outputs():
+    """List generated output files"""
+    try:
+        output_type = request.args.get('type', 'videos')
+        output_dir = os.path.join(OUTPUT_FOLDER, output_type)
+        files = []
+        
+        if os.path.exists(output_dir):
+            for filename in os.listdir(output_dir):
+                if filename != '.gitkeep':
+                    filepath = os.path.join(output_dir, filename)
+                    if os.path.isfile(filepath):
+                        files.append({
+                            'filename': filename,
+                            'type': output_type,
+                            'size': os.path.getsize(filepath),
+                            'created': os.path.getctime(filepath)
+                        })
+        
+        return jsonify({'success': True, 'files': files})
+    
+    except Exception as e:
+        print(f"Error listing outputs: {e}")
+        return jsonify({'success': False, 'error': 'Failed to list output files'}), 500
+
+
+@app.route('/delete-file', methods=['POST'])
+def delete_file():
+    """Delete an uploaded file"""
+    try:
+        data = request.json
+        filename = data.get('filename')
+        
+        if not filename:
+            return jsonify({'error': 'No filename provided'}), 400
+        
+        try:
+            filepath = safe_join_path(UPLOAD_FOLDER, filename)
+        except ValueError:
+            return jsonify({'error': 'Invalid filename'}), 400
+        
+        if os.path.exists(filepath):
+            os.remove(filepath)
+            return jsonify({'success': True})
+        else:
+            return jsonify({'error': 'File not found'}), 404
+    
+    except Exception as e:
+        print(f"Error deleting file: {e}")
+        return jsonify({'error': 'Failed to delete file'}), 500
+
+
+@app.route('/delete-all-files', methods=['POST'])
+def delete_all_files():
+    """Delete all uploaded files"""
+    try:
+        count = 0
+        if os.path.exists(UPLOAD_FOLDER):
+            for filename in os.listdir(UPLOAD_FOLDER):
+                if filename != '.gitkeep':
+                    filepath = os.path.join(UPLOAD_FOLDER, filename)
+                    if os.path.isfile(filepath):
+                        os.remove(filepath)
+                        count += 1
+        
+        return jsonify({'success': True, 'count': count})
+    
+    except Exception as e:
+        print(f"Error deleting all files: {e}")
+        return jsonify({'error': 'Failed to delete all files'}), 500
+
+
+@app.route('/delete-output', methods=['POST'])
+def delete_output():
+    """Delete a generated output file"""
+    try:
+        data = request.json
+        output_type = data.get('type')
+        filename = data.get('filename')
+        
+        if not output_type or not filename:
+            return jsonify({'error': 'Missing type or filename'}), 400
+        
+        try:
+            filepath = safe_join_path(os.path.join(OUTPUT_FOLDER, output_type), filename)
+        except ValueError:
+            return jsonify({'error': 'Invalid file path'}), 400
+        
+        if os.path.exists(filepath):
+            os.remove(filepath)
+            return jsonify({'success': True})
+        else:
+            return jsonify({'error': 'File not found'}), 404
+    
+    except Exception as e:
+        print(f"Error deleting output: {e}")
+        return jsonify({'error': 'Failed to delete output file'}), 500
+
+
+@app.route('/delete-all-outputs', methods=['POST'])
+def delete_all_outputs():
+    """Delete all generated output files"""
+    try:
+        count = 0
+        output_types = ['videos', 'presentations', 'reports', 'excel']
+        
+        for output_type in output_types:
+            output_dir = os.path.join(OUTPUT_FOLDER, output_type)
+            if os.path.exists(output_dir):
+                for filename in os.listdir(output_dir):
+                    if filename != '.gitkeep':
+                        filepath = os.path.join(output_dir, filename)
+                        if os.path.isfile(filepath):
+                            os.remove(filepath)
+                            count += 1
+        
+        return jsonify({'success': True, 'count': count})
+    
+    except Exception as e:
+        print(f"Error deleting all outputs: {e}")
+        return jsonify({'error': 'Failed to delete all outputs'}), 500
+
+
+@app.route('/download-all-files')
+def download_all_files():
+    """Download all uploaded files as a zip archive"""
+    try:
+        import zipfile
+        import io
+        
+        zip_buffer = io.BytesIO()
+        
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            if os.path.exists(UPLOAD_FOLDER):
+                for filename in os.listdir(UPLOAD_FOLDER):
+                    if filename != '.gitkeep':
+                        filepath = os.path.join(UPLOAD_FOLDER, filename)
+                        if os.path.isfile(filepath):
+                            zip_file.write(filepath, filename)
+        
+        zip_buffer.seek(0)
+        
+        return send_file(
+            zip_buffer,
+            mimetype='application/zip',
+            as_attachment=True,
+            download_name=f'awa_uploads_{int(time.time())}.zip'
+        )
+    
+    except Exception as e:
+        print(f"Error creating zip: {e}")
+        return jsonify({'error': 'Failed to create archive'}), 500
+
+
+@app.route('/download-all-outputs')
+def download_all_outputs():
+    """Download all output files as a zip archive"""
+    try:
+        import zipfile
+        import io
+        
+        zip_buffer = io.BytesIO()
+        
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            output_types = ['videos', 'presentations', 'reports', 'excel']
+            
+            for output_type in output_types:
+                output_dir = os.path.join(OUTPUT_FOLDER, output_type)
+                if os.path.exists(output_dir):
+                    for filename in os.listdir(output_dir):
+                        if filename != '.gitkeep':
+                            filepath = os.path.join(output_dir, filename)
+                            if os.path.isfile(filepath):
+                                zip_file.write(filepath, f'{output_type}/{filename}')
+        
+        zip_buffer.seek(0)
+        
+        return send_file(
+            zip_buffer,
+            mimetype='application/zip',
+            as_attachment=True,
+            download_name=f'awa_outputs_{int(time.time())}.zip'
+        )
+    
+    except Exception as e:
+        print(f"Error creating zip: {e}")
+        return jsonify({'error': 'Failed to create archive'}), 500
+
+
+@app.route('/save-config', methods=['POST'])
+def save_config():
+    """Save platform configuration"""
+    try:
+        new_config = request.json
+        
+        # Merge with existing config
+        if os.path.exists('config.yaml'):
+            with open('config.yaml', 'r', encoding='utf-8') as f:
+                existing_config = yaml.safe_load(f) or {}
+        else:
+            existing_config = {}
+        
+        # Update config
+        if 'video' in new_config:
+            if 'video' not in existing_config:
+                existing_config['video'] = {}
+            existing_config['video'].update(new_config['video'])
+        
+        if 'tts' in new_config:
+            if 'tts' not in existing_config:
+                existing_config['tts'] = {}
+            existing_config['tts'].update(new_config['tts'])
+        
+        if 'processing' in new_config:
+            if 'processing' not in existing_config:
+                existing_config['processing'] = {}
+            existing_config['processing'].update(new_config['processing'])
+        
+        # Save to file
+        with open('config.yaml', 'w', encoding='utf-8') as f:
+            yaml.dump(existing_config, f, default_flow_style=False, allow_unicode=True)
+        
+        return jsonify({'success': True})
+    
+    except Exception as e:
+        print(f"Error saving config: {e}")
+        return jsonify({'error': 'Failed to save configuration'}), 500
 
 
 if __name__ == '__main__':
