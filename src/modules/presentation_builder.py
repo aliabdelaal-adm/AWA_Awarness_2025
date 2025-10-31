@@ -10,6 +10,16 @@ from pptx.dml.color import RGBColor
 import os
 from typing import List, Dict, Optional
 
+# Try to import Arabic text support libraries
+try:
+    from arabic_reshaper import reshape
+    from bidi.algorithm import get_display
+    ARABIC_SUPPORT = True
+except ImportError:
+    ARABIC_SUPPORT = False
+    print("Warning: Arabic text reshaping libraries not installed. Arabic text may not display correctly.")
+    print("Install with: pip install arabic-reshaper python-bidi")
+
 
 class PresentationBuilder:
     """Build professional PowerPoint presentations"""
@@ -17,9 +27,33 @@ class PresentationBuilder:
     def __init__(self):
         """Initialize presentation builder"""
         self.presentation = None
+    
+    def _format_arabic_text(self, text: str) -> str:
+        """
+        Format Arabic text for proper display in PowerPoint
+        
+        Args:
+            text: Arabic text to format
+            
+        Returns:
+            Properly formatted Arabic text
+        """
+        if not ARABIC_SUPPORT:
+            # Return original text if libraries not available
+            return text
+        
+        try:
+            reshaped_text = reshape(text)
+            bidi_text = get_display(reshaped_text)
+            return bidi_text
+        except Exception as e:
+            # If reshaping fails, return original text
+            print(f"Warning: Arabic text reshaping failed: {e}")
+            return text
         
     def create_presentation(self, title: str, slides: List[Dict], 
-                          output_path: str, language: str = 'ar') -> str:
+                          output_path: str, language: str = 'ar', 
+                          max_slides: int = None) -> str:
         """
         Create a PowerPoint presentation
         
@@ -28,6 +62,7 @@ class PresentationBuilder:
             slides: List of slide dictionaries with 'title' and 'content' keys
             output_path: Path to save the presentation
             language: Language code ('ar' or 'en')
+            max_slides: Maximum number of slides to create (None for all)
             
         Returns:
             Path to created presentation file
@@ -43,13 +78,20 @@ class PresentationBuilder:
             # Create title slide
             self._create_title_slide(title, language)
             
+            # Limit slides if max_slides specified
+            slides_to_create = slides
+            if max_slides and max_slides > 0:
+                # Smart merging: combine slides to fit within max_slides
+                slides_to_create = self._merge_slides_intelligently(slides, max_slides)
+            
             # Create content slides
-            for slide_data in slides:
+            for slide_data in slides_to_create:
                 if 'image_path' in slide_data:
                     self._create_image_slide(
                         slide_data.get('title', ''),
                         slide_data.get('image_path', ''),
-                        slide_data.get('content', '')
+                        slide_data.get('content', ''),
+                        language
                     )
                 else:
                     self._create_content_slide(
@@ -63,20 +105,87 @@ class PresentationBuilder:
             self.presentation.save(output_path)
             
             print(f"✓ PowerPoint presentation created: {output_path}")
+            print(f"  Total slides: {len(self.presentation.slides)}")
             return output_path
             
         except Exception as e:
             print(f"Error creating presentation: {e}")
+            import traceback
+            traceback.print_exc()
             return None
+    
+    def _merge_slides_intelligently(self, slides: List[Dict], max_slides: int) -> List[Dict]:
+        """
+        Intelligently merge slides to reduce total count
+        
+        The algorithm works by:
+        1. Calculating a merge ratio (original_slides / target_slides)
+        2. Grouping slides based on this ratio
+        3. Combining text content while preserving image slides separately
+        
+        Args:
+            slides: Original list of slides
+            max_slides: Maximum number of slides desired
+            
+        Returns:
+            Merged list of slides
+        """
+        if len(slides) <= max_slides:
+            return slides
+        
+        # Calculate how many original slides should be merged into each result slide
+        merge_ratio = len(slides) / max_slides
+        merged_slides = []
+        
+        i = 0
+        while i < len(slides) and len(merged_slides) < max_slides:
+            # Determine how many slides to merge in this iteration
+            # Use merge_ratio for most slides, but ensure we process all remaining slides in the last iteration
+            slides_to_merge = int(merge_ratio) if len(merged_slides) < max_slides - 1 else len(slides) - i
+            slides_to_merge = max(1, min(slides_to_merge, len(slides) - i))
+            
+            # Merge slides
+            if slides_to_merge == 1:
+                merged_slides.append(slides[i])
+            else:
+                # Combine multiple slides into one
+                merged_slide = {
+                    'title': slides[i].get('title', f'Section {len(merged_slides) + 1}'),
+                    'content': '',
+                    'source': 'merged'
+                }
+                
+                # Combine content from multiple slides
+                content_parts = []
+                for j in range(i, min(i + slides_to_merge, len(slides))):
+                    slide = slides[j]
+                    if 'content' in slide and slide['content']:
+                        content_parts.append(slide['content'])
+                    elif 'image_path' in slide:
+                        # Keep image slides separate
+                        merged_slides.append(slide)
+                        continue
+                
+                # Join content with bullet points
+                merged_slide['content'] = '\n\n'.join(content_parts)
+                if content_parts:
+                    merged_slides.append(merged_slide)
+            
+            i += slides_to_merge
+        
+        return merged_slides
     
     def _create_title_slide(self, title: str, language: str = 'ar'):
         """Create title slide"""
         slide_layout = self.presentation.slide_layouts[0]  # Title slide layout
         slide = self.presentation.slides.add_slide(slide_layout)
         
+        # Format title for Arabic if needed
+        display_title = self._format_arabic_text(title) if language == 'ar' else title
+        
         # Set title
         title_shape = slide.shapes.title
-        title_shape.text = title
+        title_shape.text = display_title
         
         # Format title
         title_frame = title_shape.text_frame
@@ -85,13 +194,19 @@ class PresentationBuilder:
         title_frame.paragraphs[0].font.bold = True
         title_frame.paragraphs[0].font.color.rgb = RGBColor(0, 51, 102)
         
+        # Set font for Arabic
+        if language == 'ar':
+            title_frame.paragraphs[0].font.name = 'Arial'
+        
         # Add subtitle if Arabic
         if language == 'ar' and slide.placeholders:
             try:
                 subtitle = slide.placeholders[1]
-                subtitle.text = "عرض إحترافي مبتكر"
+                subtitle_text = self._format_arabic_text("عرض إحترافي مبتكر")
+                subtitle.text = subtitle_text
                 subtitle.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
                 subtitle.text_frame.paragraphs[0].font.size = Pt(32)
+                subtitle.text_frame.paragraphs[0].font.name = 'Arial'
             except:
                 pass
         
@@ -106,9 +221,12 @@ class PresentationBuilder:
         slide_layout = self.presentation.slide_layouts[1]  # Title and Content layout
         slide = self.presentation.slides.add_slide(slide_layout)
         
+        # Format title for Arabic if needed
+        display_title = self._format_arabic_text(slide_title) if language == 'ar' else slide_title
+        
         # Set title
         title_shape = slide.shapes.title
-        title_shape.text = slide_title
+        title_shape.text = display_title
         
         # Format title
         title_frame = title_shape.text_frame
@@ -118,6 +236,7 @@ class PresentationBuilder:
         
         if language == 'ar':
             title_frame.paragraphs[0].alignment = PP_ALIGN.RIGHT
+            title_frame.paragraphs[0].font.name = 'Arial'
         
         # Add content
         if slide.placeholders:
@@ -126,8 +245,11 @@ class PresentationBuilder:
                 text_frame = content_placeholder.text_frame
                 text_frame.clear()
                 
+                # Format content for Arabic if needed
+                display_content = self._format_arabic_text(content) if language == 'ar' else content
+                
                 # Split content into paragraphs
-                paragraphs = content.split('\n')
+                paragraphs = display_content.split('\n')
                 
                 for i, para_text in enumerate(paragraphs):
                     if para_text.strip():
@@ -141,6 +263,7 @@ class PresentationBuilder:
                         
                         if language == 'ar':
                             p.alignment = PP_ALIGN.RIGHT
+                            p.font.name = 'Arial'
                         else:
                             p.alignment = PP_ALIGN.LEFT
             except Exception as e:
@@ -152,10 +275,13 @@ class PresentationBuilder:
         fill.solid()
         fill.fore_color.rgb = RGBColor(255, 255, 255)  # White
     
-    def _create_image_slide(self, slide_title: str, image_path: str, caption: str = ''):
-        """Create slide with image"""
+    def _create_image_slide(self, slide_title: str, image_path: str, caption: str = '', language: str = 'ar'):
+        """Create slide with image and text merged professionally"""
         slide_layout = self.presentation.slide_layouts[6]  # Blank layout
         slide = self.presentation.slides.add_slide(slide_layout)
+        
+        # Format title for Arabic if needed
+        display_title = self._format_arabic_text(slide_title) if language == 'ar' else slide_title
         
         # Add title at top
         left = Inches(0.5)
@@ -165,47 +291,57 @@ class PresentationBuilder:
         
         title_box = slide.shapes.add_textbox(left, top, width, height)
         text_frame = title_box.text_frame
-        text_frame.text = slide_title
+        text_frame.text = display_title
         
         p = text_frame.paragraphs[0]
         p.font.size = Pt(40)
         p.font.bold = True
         p.font.color.rgb = RGBColor(0, 51, 102)
         p.alignment = PP_ALIGN.CENTER
+        if language == 'ar':
+            p.font.name = 'Arial'
         
         # Add image
         if os.path.exists(image_path):
             try:
-                # Calculate image position and size
+                # Calculate image position and size - leave space for caption
                 img_left = Inches(1.5)
                 img_top = Inches(2)
                 img_width = Inches(10.333)
+                img_height = Inches(4)  # Reduced to leave space for caption
                 
                 slide.shapes.add_picture(
                     image_path,
                     img_left,
                     img_top,
-                    width=img_width
+                    width=img_width,
+                    height=img_height
                 )
             except Exception as e:
                 print(f"Error adding image to slide: {e}")
         
-        # Add caption if provided
+        # Add caption if provided - merged with image
         if caption:
+            display_caption = self._format_arabic_text(caption) if language == 'ar' else caption
+            
             caption_left = Inches(0.5)
-            caption_top = Inches(6.5)
+            caption_top = Inches(6.2)
             caption_width = Inches(12.333)
-            caption_height = Inches(0.8)
+            caption_height = Inches(1)
             
             caption_box = slide.shapes.add_textbox(
                 caption_left, caption_top, caption_width, caption_height
             )
             caption_frame = caption_box.text_frame
-            caption_frame.text = caption
+            caption_frame.text = display_caption
+            caption_frame.word_wrap = True
             
             p = caption_frame.paragraphs[0]
             p.font.size = Pt(18)
             p.alignment = PP_ALIGN.CENTER
+            if language == 'ar':
+                p.font.name = 'Arial'
+                p.alignment = PP_ALIGN.RIGHT
         
         # Set background color
         background = slide.background
