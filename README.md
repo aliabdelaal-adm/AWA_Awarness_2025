@@ -9,6 +9,28 @@
 
 ---
 
+## 🌐 أين يوجد رابط عرض منصة AWA؟ / Where is the AWA Platform Link?
+
+### ⚡ **الرابط المباشر للمنصة / Direct Platform Link:**
+
+🚀 **[افتح منصة AWA الآن - Open AWA Platform Now](https://codespaces.new/aliabdelaal-adm/AWA_Awarness_2025)**
+
+**أو / Or:**
+
+🌐 **[افتح في Gitpod - Open in Gitpod](https://gitpod.io/#https://github.com/aliabdelaal-adm/AWA_Awarness_2025)**
+
+### 📖 **دليل الوصول الكامل / Complete Access Guide:**
+
+📄 **[PLATFORM_ACCESS.md](PLATFORM_ACCESS.md)** - دليل شامل يوضح جميع طرق الوصول إلى المنصة / Comprehensive guide showing all platform access methods
+
+**ملخص سريع / Quick Summary:**
+- ✅ **مجاني / Free** - 60 ساعة شهرياً / hours per month
+- ✅ **فوري / Instant** - جاهز في 2-3 دقائق / Ready in 2-3 minutes
+- ✅ **لا تحميل / No Download** - كل شيء في المتصفح / Everything in browser
+- ✅ **من أي جهاز / Any Device** - Windows, Mac, Linux, iPad
+
+---
+
 ## 📚 وثائق شاملة جديدة! / New Comprehensive Documentation!
 
 ### 🆕 تقارير وعروض تقديمية مفصلة / Detailed Reports & Presentations

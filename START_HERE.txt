@@ -3,6 +3,18 @@
   Welcome to AWA Content Generation Platform!
 ================================================================================
 
+🌐 أين يوجد رابط عرض منصة AWA؟ / Where is the AWA Platform Link?
+🌐 WHERE IS THE AWA PLATFORM DISPLAY LINK?
+
+   ⚡ الرابط المباشر / DIRECT LINK:
+   
+   🚀 https://codespaces.new/aliabdelaal-adm/AWA_Awarness_2025
+   
+   📖 دليل الوصول الكامل / Complete Access Guide:
+      PLATFORM_ACCESS.md
+
+================================================================================
+
 ☁️  الطريقة الأسهل - استخدم المنصة مباشرة من المتصفح!
 ☁️  EASIEST WAY - Use the Platform Directly from Browser!
 
