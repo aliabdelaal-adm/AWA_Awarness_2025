@@ -698,12 +698,12 @@
                 
                 <!-- Tabs for different control sections -->
                 <div class="tabs">
-                    <button class="tab active" onclick="switchTab('files')">📁 Files Manager</button>
-                    <button class="tab" onclick="switchTab('outputs')">📤 Outputs</button>
-                    <button class="tab" onclick="switchTab('config')">⚙️ Configuration</button>
-                    <button class="tab" onclick="switchTab('batch')">📦 Batch Operations</button>
-                    <button class="tab" onclick="switchTab('logs')">📋 Logs</button>
-                    <button class="tab" onclick="switchTab('api')">🔌 API Testing</button>
+                    <button class="tab active" onclick="switchTab('files', event)">📁 Files Manager</button>
+                    <button class="tab" onclick="switchTab('outputs', event)">📤 Outputs</button>
+                    <button class="tab" onclick="switchTab('config', event)">⚙️ Configuration</button>
+                    <button class="tab" onclick="switchTab('batch', event)">📦 Batch Operations</button>
+                    <button class="tab" onclick="switchTab('logs', event)">📋 Logs</button>
+                    <button class="tab" onclick="switchTab('api', event)">🔌 API Testing</button>
                 </div>
                 
                 <!-- Files Manager Tab -->
@@ -1313,7 +1313,7 @@
             }
         }
         
-        function switchTab(tabName) {
+        function switchTab(tabName, event) {
             // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -1324,7 +1324,9 @@
             
             // Show selected tab
             document.getElementById(tabName + 'Tab').classList.add('active');
-            event.target.classList.add('active');
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
             
             // Load data for specific tabs
             if (tabName === 'files') {
@@ -1566,7 +1568,9 @@
         function viewFile(filename) {
             addLog(`Viewing file: ${filename}`, 'info');
             // This could open a modal or new tab to view the file
-            alert(`View functionality for ${filename} would open here in a full implementation.`);
+            showStatus('info', currentLang === 'ar' 
+                ? `عرض الملف: ${filename}` 
+                : `Viewing file: ${filename}`);
         }
         
         function saveConfiguration() {

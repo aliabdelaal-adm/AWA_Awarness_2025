@@ -911,7 +911,6 @@ def download_all_outputs():
     try:
         import zipfile
         import io
-        import time
         
         zip_buffer = io.BytesIO()
         
