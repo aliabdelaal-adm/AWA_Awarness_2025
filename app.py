@@ -305,7 +305,10 @@ def generate_video_presentation(files, title, language, clarification_notes=''):
         return {'error': 'Failed to generate video'}
 
 
+ copilot/add-index-html-for-awa-platform
 
+
+ main
 def generate_powerpoint_presentation(files, title, language, clarification_notes='', max_slides=None):
     """Generate PowerPoint presentation from files"""
     try:
@@ -677,6 +680,42 @@ def download_pdf(filename):
             return jsonify({'error': 'File not found'}), 404
     except (ValueError, Exception):
         return jsonify({'error': 'Invalid file path'}), 400
+
+
+@app.route('/admin')
+def admin_dashboard():
+    """Admin dashboard for developers and system owners"""
+    # Get statistics
+    stats = {
+        'uploaded_files': 0,
+        'videos': 0,
+        'presentations': 0,
+        'reports': 0,
+        'excel_files': 0
+    }
+    
+    # Count uploaded files
+    if os.path.exists(UPLOAD_FOLDER):
+        stats['uploaded_files'] = len([f for f in os.listdir(UPLOAD_FOLDER) if os.path.isfile(os.path.join(UPLOAD_FOLDER, f)) and f != '.gitkeep'])
+    
+    # Count outputs
+    videos_path = os.path.join(OUTPUT_FOLDER, 'videos')
+    if os.path.exists(videos_path):
+        stats['videos'] = len([f for f in os.listdir(videos_path) if os.path.isfile(os.path.join(videos_path, f)) and f != '.gitkeep'])
+    
+    presentations_path = os.path.join(OUTPUT_FOLDER, 'presentations')
+    if os.path.exists(presentations_path):
+        stats['presentations'] = len([f for f in os.listdir(presentations_path) if os.path.isfile(os.path.join(presentations_path, f)) and f != '.gitkeep'])
+    
+    reports_path = os.path.join(OUTPUT_FOLDER, 'reports')
+    if os.path.exists(reports_path):
+        stats['reports'] = len([f for f in os.listdir(reports_path) if os.path.isfile(os.path.join(reports_path, f)) and f != '.gitkeep'])
+    
+    excel_path = os.path.join(OUTPUT_FOLDER, 'excel')
+    if os.path.exists(excel_path):
+        stats['excel_files'] = len([f for f in os.listdir(excel_path) if os.path.isfile(os.path.join(excel_path, f)) and f != '.gitkeep'])
+    
+    return render_template('admin.html', stats=stats)
 
 
 @app.route('/health')
