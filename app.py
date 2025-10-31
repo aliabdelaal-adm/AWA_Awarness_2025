@@ -61,11 +61,13 @@ def smart_chunk_text(text, chunk_size=NOTES_CHUNK_SIZE):
     """
     Split text into chunks while trying to preserve sentence boundaries.
     Falls back to word boundaries if sentences are too long.
+    Supports both English and Arabic punctuation marks.
     """
     chunks = []
     
-    # Try to split by sentences first (. ! ? followed by space or end)
-    sentences = re.split(r'([.!?]\s+|[.!?]$)', text)
+    # Try to split by sentences first
+    # Includes both English (. ! ?) and Arabic (۔ ؟ !) punctuation
+    sentences = re.split(r'([.!?؟۔]\s+|[.!?؟۔]$)', text)
     current_chunk = ""
     
     for i in range(0, len(sentences), 2):
@@ -185,7 +187,7 @@ def generate_presentation():
             # Check length limit
             if len(clarification_notes) > MAX_NOTES_LENGTH:
                 error_msg = (
-                    f'الملاحظات طويلة جداً. الحد الأقصى {MAX_NOTES_LENGTH} حرف.' 
+                    f'الملاحظات طويلة جداً. الحد الأقصى {MAX_NOTES_LENGTH} حرف' 
                     if language == 'ar' 
                     else f'Clarification notes too long. Maximum {MAX_NOTES_LENGTH} characters allowed.'
                 )
