@@ -363,10 +363,20 @@
                 
                 <div class="form-group">
                     <label class="form-label" id="typeLabel">نوع الإخراج:</label>
-                    <select id="outputType" class="form-select">
+                    <select id="outputType" class="form-select" onchange="toggleMaxSlides()">
                         <option value="video">🎬 فيديو احترافي (Professional Video)</option>
                         <option value="powerpoint">📊 عرض باور بوينت (PowerPoint Presentation)</option>
+                        <option value="excel">📈 جدول إكسل (Excel Spreadsheet)</option>
+                        <option value="word">📄 مستند وورد (Word Document)</option>
+                        <option value="pdf">📕 تقرير PDF (PDF Report)</option>
                     </select>
+                </div>
+                
+                <div class="form-group" id="maxSlidesGroup" style="display: none;">
+                    <label class="form-label" id="maxSlidesLabel">الحد الأقصى للشرائح (اختياري):</label>
+                    <input type="number" id="maxSlides" class="form-input" 
+                           placeholder="اترك فارغاً لجميع الشرائح" min="1" max="100">
+                    <div class="upload-hint" id="maxSlidesHint">حدد عدد الشرائح المطلوب لتقليل حجم الملف</div>
                 </div>
             </div>
             
@@ -404,7 +414,7 @@
         const translations = {
             ar: {
                 mainTitle: '🎬 منصة تصميم العروض الإحترافية AWA',
-                mainSubtitle: 'صمم وأنشئ عروض فيديو وعروض باور بوينت احترافية ومبتكرة',
+                mainSubtitle: 'صمم وأنشئ عروض فيديو وعروض باور بوينت وتقارير احترافية ومبتكرة',
                 uploadTitle: '📁 تحميل الملفات',
                 uploadText: 'انقر هنا أو اسحب الملفات لتحميلها',
                 uploadHint: 'PDF, صور, نصوص, وثائق (حتى 50MB)',
@@ -412,6 +422,8 @@
                 titleLabel: 'عنوان العرض:',
                 languageLabel: 'اللغة:',
                 typeLabel: 'نوع الإخراج:',
+                maxSlidesLabel: 'الحد الأقصى للشرائح (اختياري):',
+                maxSlidesHint: 'حدد عدد الشرائح المطلوب لتقليل حجم الملف',
                 generateTitle: '✨ إنشاء العرض',
                 generateBtnText: 'إعداد العرض الإحترافي',
                 clearBtnText: 'مسح الكل وإعادة البدء',
@@ -420,7 +432,7 @@
             },
             en: {
                 mainTitle: '🎬 AWA Professional Presentation Design Platform',
-                mainSubtitle: 'Design and create professional and innovative video and PowerPoint presentations',
+                mainSubtitle: 'Design and create professional and innovative videos, PowerPoint presentations, and reports',
                 uploadTitle: '📁 Upload Files',
                 uploadText: 'Click here or drag files to upload',
                 uploadHint: 'PDF, Images, Text, Documents (up to 50MB)',
@@ -428,6 +440,8 @@
                 titleLabel: 'Presentation Title:',
                 languageLabel: 'Language:',
                 typeLabel: 'Output Type:',
+                maxSlidesLabel: 'Maximum Slides (Optional):',
+                maxSlidesHint: 'Set the desired number of slides to reduce file size',
                 generateTitle: '✨ Generate Presentation',
                 generateBtnText: 'Generate Professional Presentation',
                 clearBtnText: 'Clear All and Restart',
@@ -556,6 +570,18 @@
             }
         }
         
+        function toggleMaxSlides() {
+            const outputType = document.getElementById('outputType').value;
+            const maxSlidesGroup = document.getElementById('maxSlidesGroup');
+            
+            // Show max_slides option only for PowerPoint
+            if (outputType === 'powerpoint') {
+                maxSlidesGroup.style.display = 'block';
+            } else {
+                maxSlidesGroup.style.display = 'none';
+            }
+        }
+        
         function generatePresentation() {
             if (uploadedFiles.length === 0) {
                 showStatus('error', currentLang === 'ar' 
@@ -567,15 +593,27 @@
             const title = document.getElementById('presentationTitle').value;
             const language = document.getElementById('presentationLanguage').value;
             const outputType = document.getElementById('outputType').value;
+            const maxSlidesInput = document.getElementById('maxSlides');
+            const maxSlides = maxSlidesInput.value ? parseInt(maxSlidesInput.value) : null;
             
             const generateBtn = document.getElementById('generateBtn');
             const loadingDiv = document.getElementById('loadingDiv');
             
             generateBtn.disabled = true;
             loadingDiv.style.display = 'block';
-            showStatus('info', currentLang === 'ar' 
+            
+            // Update loading text based on output type
+            const loadingMessages = {
+                'video': currentLang === 'ar' ? 'جاري إنشاء الفيديو... قد يستغرق هذا بضع دقائق' : 'Generating video... This may take a few minutes',
+                'powerpoint': currentLang === 'ar' ? 'جاري إنشاء عرض باور بوينت...' : 'Generating PowerPoint presentation...',
+                'excel': currentLang === 'ar' ? 'جاري إنشاء جدول إكسل...' : 'Generating Excel spreadsheet...',
+                'word': currentLang === 'ar' ? 'جاري إنشاء مستند وورد...' : 'Generating Word document...',
+                'pdf': currentLang === 'ar' ? 'جاري إنشاء تقرير PDF...' : 'Generating PDF report...'
+            };
+            
+            showStatus('info', loadingMessages[outputType] || (currentLang === 'ar' 
                 ? 'جاري إنشاء العرض... قد يستغرق هذا بضع دقائق' 
-                : 'Generating presentation... This may take a few minutes');
+                : 'Generating presentation... This may take a few minutes'));
             
             const requestData = {
                 title: title,
@@ -583,6 +621,11 @@
                 output_type: outputType,
                 files: uploadedFiles.map(f => f.filename)
             };
+            
+            // Add max_slides only for PowerPoint
+            if (outputType === 'powerpoint' && maxSlides) {
+                requestData.max_slides = maxSlides;
+            }
             
             fetch('/generate-presentation', {
                 method: 'POST',
@@ -597,14 +640,28 @@
                 loadingDiv.style.display = 'none';
                 
                 if (data.success) {
-                    showStatus('success', currentLang === 'ar' 
+                    const successMessages = {
+                        'video': currentLang === 'ar' ? 'تم إنشاء الفيديو بنجاح!' : 'Video generated successfully!',
+                        'powerpoint': currentLang === 'ar' ? 'تم إنشاء عرض باور بوينت بنجاح!' : 'PowerPoint presentation generated successfully!',
+                        'excel': currentLang === 'ar' ? 'تم إنشاء جدول إكسل بنجاح!' : 'Excel spreadsheet generated successfully!',
+                        'word': currentLang === 'ar' ? 'تم إنشاء مستند وورد بنجاح!' : 'Word document generated successfully!',
+                        'pdf': currentLang === 'ar' ? 'تم إنشاء تقرير PDF بنجاح!' : 'PDF report generated successfully!'
+                    };
+                    
+                    showStatus('success', successMessages[data.output_type] || (currentLang === 'ar' 
                         ? 'تم إنشاء العرض بنجاح!' 
-                        : 'Presentation generated successfully!');
+                        : 'Presentation generated successfully!'));
                     
                     const downloadSection = document.getElementById('downloadSection');
+                    let downloadText = currentLang === 'ar' ? 'تحميل الملف' : 'Download File';
+                    
+                    if (data.slides_count) {
+                        downloadText += ` (${data.slides_count} ${currentLang === 'ar' ? 'شريحة' : 'slides'})`;
+                    }
+                    
                     downloadSection.innerHTML = `
                         <a href="${data.download_url}" class="download-link">
-                            📥 ${currentLang === 'ar' ? 'تحميل العرض' : 'Download Presentation'} (${data.filename})
+                            📥 ${downloadText}: ${data.filename}
                         </a>
                     `;
                 } else {

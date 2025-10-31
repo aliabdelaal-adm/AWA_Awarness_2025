@@ -169,33 +169,63 @@ class VideoGenerator:
         title_slide = self.create_text_slide(title, title_duration, title)
         clips.append(title_slide)
         
-        # Create slides for each text chunk with corresponding audio
+        # Verify audio files exist and are valid
+        valid_pairs = []
         for i, (text, audio_path) in enumerate(zip(text_chunks, audio_files)):
-            if os.path.exists(audio_path):
-                # Get audio duration
-                audio_clip = AudioFileClip(audio_path)
-                duration = audio_clip.duration + 1  # Add 1 second padding
-                
-                # Create video slide
-                slide = self.create_text_slide(text, duration)
-                
-                # Add audio to slide
-                slide = slide.set_audio(audio_clip)
-                
-                clips.append(slide)
+            if os.path.exists(audio_path) and os.path.getsize(audio_path) > 0:
+                valid_pairs.append((text, audio_path))
             else:
-                print(f"Warning: Audio file not found: {audio_path}")
-                # Create slide without audio
-                slide = self.create_text_slide(text, 5)
-                clips.append(slide)
+                print(f"Warning: Audio file missing or empty: {audio_path}")
+                # Create slide with default duration if audio is missing
+                valid_pairs.append((text, None))
+        
+        # Create slides for each text chunk with corresponding audio
+        for i, (text, audio_path) in enumerate(valid_pairs):
+            try:
+                if audio_path:
+                    # Get audio duration
+                    try:
+                        audio_clip = AudioFileClip(audio_path)
+                        duration = audio_clip.duration + 1  # Add 1 second padding
+                        
+                        # Create video slide
+                        slide = self.create_text_slide(text, duration)
+                        
+                        # Add audio to slide
+                        slide = slide.set_audio(audio_clip)
+                        
+                        clips.append(slide)
+                    except Exception as e:
+                        print(f"Error processing audio file {audio_path}: {e}")
+                        # Fallback to slide without audio
+                        slide = self.create_text_slide(text, 5)
+                        clips.append(slide)
+                else:
+                    # Create slide without audio
+                    slide = self.create_text_slide(text, 5)
+                    clips.append(slide)
+            except Exception as e:
+                print(f"Error creating slide {i}: {e}")
+                continue
+        
+        if not clips:
+            print("Error: No valid clips created")
+            return None
         
         # Concatenate all clips
-        final_video = concatenate_videoclips(clips, method="compose")
+        try:
+            final_video = concatenate_videoclips(clips, method="compose")
+        except Exception as e:
+            print(f"Error concatenating clips: {e}")
+            return None
         
         # Write video file
         output_path = os.path.join(self.output_dir, output_filename)
         
         try:
+            # Ensure output directory exists
+            os.makedirs(self.output_dir, exist_ok=True)
+            
             final_video.write_videofile(
                 output_path,
                 fps=self.fps,
@@ -203,20 +233,29 @@ class VideoGenerator:
                 audio_codec='aac',
                 temp_audiofile='temp-audio.m4a',
                 remove_temp=True,
-                threads=4
+                threads=4,
+                preset='medium',  # Better quality
+                audio_bitrate='192k'  # Higher audio quality
             )
             
             print(f"\n✓ Video generated successfully: {output_path}")
+            print(f"  Duration: {final_video.duration:.2f} seconds")
+            print(f"  Slides: {len(clips)}")
             return output_path
         
         except Exception as e:
             print(f"Error generating video: {e}")
+            import traceback
+            traceback.print_exc()
             return None
         finally:
             # Clean up
-            final_video.close()
-            for clip in clips:
-                clip.close()
+            try:
+                final_video.close()
+                for clip in clips:
+                    clip.close()
+            except:
+                pass
     
     def add_logo(self, video_path: str, logo_path: str, 
                 position: str = 'top-right') -> str:
