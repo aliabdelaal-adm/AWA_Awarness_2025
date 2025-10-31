@@ -36,6 +36,30 @@ The AWA platform now provides **5 professional output formats** with comprehensi
 
 ---
 
+## 🔐 **رابط الدخول للمطورين ومالك النظام / Developer & Admin Access**
+
+### ⚡ **الرابط الثابت للمطورين / Permanent Developer Link:**
+
+🔑 **[دخول المطورين - Developer Login](https://codespaces.new/aliabdelaal-adm/AWA_Awarness_2025)**
+
+**بعد التشغيل / After starting:**
+- 🏠 **الواجهة الرئيسية / Main Interface:** `http://localhost:5000/`
+- 🔐 **لوحة تحكم المطورين / Admin Dashboard:** `http://localhost:5000/admin`
+- 💚 **حالة النظام / System Health:** `http://localhost:5000/health`
+
+### 📖 **دليل المطورين الكامل / Complete Developer Guide:**
+
+📄 **[DEVELOPER_ACCESS.md](DEVELOPER_ACCESS.md)** - دليل شامل للمطورين مع رابط ثابت للدخول والتحرير وإعداد التقارير / Comprehensive developer guide with permanent access link for login, editing, and report preparation
+
+**المميزات للمطورين / Developer Features:**
+- ✅ **رابط ثابت دائم / Permanent Stable Link** - للوصول من أي مكان
+- ✅ **لوحة تحكم إدارية / Admin Dashboard** - صلاحيات كاملة
+- ✅ **إعداد التقارير / Report Preparation** - تقارير شاملة
+- ✅ **تحرير كامل / Full Editing** - تعديل جميع الإعدادات
+- ✅ **مراقبة النظام / System Monitoring** - إحصائيات مفصلة
+
+---
+
 ## 🌐 أين يوجد رابط عرض منصة AWA؟ / Where is the AWA Platform Link?
 
 ### ⚡ **الرابط المباشر للمنصة / Direct Platform Link:**
