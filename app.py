@@ -6,6 +6,7 @@ AWA Presentation Design Platform - Web Application
 import os
 import sys
 import json
+import html
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, send_file, url_for
 from flask_cors import CORS
@@ -28,7 +29,11 @@ CORS(app)
 UPLOAD_FOLDER = 'uploads'
 OUTPUT_FOLDER = 'output'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif', 'txt', 'doc', 'docx', 'xlsx', 'csv'}
-NOTES_CHUNK_SIZE = 300  # Maximum characters per chunk for clarification notes
+# Maximum characters per chunk for clarification notes when generating video segments.
+# This size is chosen to balance between readability and TTS processing efficiency.
+# Smaller chunks provide better pacing in video presentations.
+NOTES_CHUNK_SIZE = 300
+MAX_NOTES_LENGTH = 50000  # Maximum allowed length for clarification notes
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
@@ -130,6 +135,15 @@ def generate_presentation():
         selected_files = data.get('files', [])
         clarification_notes = data.get('clarification_notes', '')  # New field for additional notes
         
+        # Validate and sanitize clarification notes
+        if clarification_notes:
+            clarification_notes = clarification_notes.strip()
+            # Check length limit
+            if len(clarification_notes) > MAX_NOTES_LENGTH:
+                return jsonify({'error': f'Clarification notes too long. Maximum {MAX_NOTES_LENGTH} characters allowed.'}), 400
+            # Sanitize HTML to prevent XSS attacks
+            clarification_notes = html.escape(clarification_notes)
+        
         if not selected_files:
             return jsonify({'error': 'No files selected'}), 400
         
@@ -152,9 +166,8 @@ def generate_video_presentation(files, title, language, clarification_notes=''):
     text_chunks = []
     
     # Add clarification notes as the first chunk if provided
-    if clarification_notes and clarification_notes.strip():
-        # Sanitize and prepare clarification notes text
-        clarification_notes = clarification_notes.strip()
+    # Note: clarification_notes is already sanitized in the route handler
+    if clarification_notes:
         notes_prefix = "ملاحظات توضيحية: " if language == 'ar' else "Clarification Notes: "
         notes_text = notes_prefix + clarification_notes
         
@@ -234,9 +247,8 @@ def generate_powerpoint_presentation(files, title, language, clarification_notes
         slides_content = []
         
         # Add clarification notes as the first slide if provided
-        if clarification_notes and clarification_notes.strip():
-            # Sanitize the notes
-            clarification_notes = clarification_notes.strip()
+        # Note: clarification_notes is already sanitized in the route handler
+        if clarification_notes:
             notes_title = 'ملاحظات توضيحية' if language == 'ar' else 'Clarification Notes'
             
             slides_content.append({
