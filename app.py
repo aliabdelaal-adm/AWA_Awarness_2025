@@ -6,6 +6,8 @@ AWA Presentation Design Platform - Web Application
 import os
 import sys
 import json
+import html
+import re
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, send_file, url_for
 from flask_cors import CORS
@@ -30,6 +32,11 @@ CORS(app)
 UPLOAD_FOLDER = 'uploads'
 OUTPUT_FOLDER = 'output'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif', 'txt', 'doc', 'docx', 'xlsx', 'csv'}
+# Maximum characters per chunk for clarification notes when generating video segments.
+# This size is chosen to balance between readability and TTS processing efficiency.
+# Smaller chunks provide better pacing in video presentations.
+NOTES_CHUNK_SIZE = 300
+MAX_NOTES_LENGTH = 50000  # Maximum allowed length for clarification notes
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
@@ -52,6 +59,51 @@ except:
 def allowed_file(filename):
     """Check if file extension is allowed"""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def smart_chunk_text(text, chunk_size=NOTES_CHUNK_SIZE):
+    """
+    Split text into chunks while trying to preserve sentence boundaries.
+    Falls back to word boundaries if sentences are too long.
+    Supports both English and Arabic punctuation marks.
+    """
+    chunks = []
+    
+    # Try to split by sentences first
+    # Includes both English (. ! ?) and Arabic (۔ ؟ !) punctuation
+    sentences = re.split(r'([.!?؟۔]\s+|[.!?؟۔]$)', text)
+    current_chunk = ""
+    
+    for i in range(0, len(sentences), 2):
+        sentence = sentences[i] if i < len(sentences) else ""
+        delimiter = sentences[i + 1] if i + 1 < len(sentences) else ""
+        full_sentence = sentence + delimiter
+        
+        # If adding this sentence would exceed chunk size
+        if len(current_chunk) + len(full_sentence) > chunk_size:
+            if current_chunk:
+                chunks.append(current_chunk.strip())
+                current_chunk = ""
+            
+            # If single sentence is longer than chunk size, split by words
+            if len(full_sentence) > chunk_size:
+                words = full_sentence.split()
+                for word in words:
+                    if len(current_chunk) + len(word) + 1 > chunk_size:
+                        if current_chunk:
+                            chunks.append(current_chunk.strip())
+                        current_chunk = word + " "
+                    else:
+                        current_chunk += word + " "
+            else:
+                current_chunk = full_sentence
+        else:
+            current_chunk += full_sentence
+    
+    if current_chunk.strip():
+        chunks.append(current_chunk.strip())
+    
+    return chunks
 
 
 def safe_join_path(base_dir, filename):
@@ -131,13 +183,36 @@ def generate_presentation():
         title = data.get('title', 'عرض إحترافي')
         language = data.get('language', 'ar')
         selected_files = data.get('files', [])
+ copilot/add-report-clarification-box
+        clarification_notes = data.get('clarification_notes', '')  # New field for additional notes
+        
+        # Validate and sanitize clarification notes
+        if clarification_notes:
+            clarification_notes = clarification_notes.strip()
+            # Check length limit
+            if len(clarification_notes) > MAX_NOTES_LENGTH:
+                error_msg = (
+                    f'الملاحظات طويلة جداً. الحد الأقصى {MAX_NOTES_LENGTH} حرف' 
+                    if language == 'ar' 
+                    else f'Clarification notes too long. Maximum {MAX_NOTES_LENGTH} characters allowed.'
+                )
+                return jsonify({'error': error_msg}), 400
+            # Sanitize HTML to prevent XSS attacks
+            clarification_notes = html.escape(clarification_notes)
+
         max_slides = data.get('max_slides', None)  # Optional slide limit
+ main
         
         if not selected_files:
             return jsonify({'error': 'No files selected'}), 400
         
         # Process files and generate presentation based on output type
         if output_type == 'video':
+ copilot/add-report-clarification-box
+            result = generate_video_presentation(selected_files, title, language, clarification_notes)
+        else:
+            result = generate_powerpoint_presentation(selected_files, title, language, clarification_notes)
+
             result = generate_video_presentation(selected_files, title, language)
         elif output_type == 'powerpoint':
             result = generate_powerpoint_presentation(selected_files, title, language, max_slides)
@@ -149,6 +224,7 @@ def generate_presentation():
             result = generate_pdf_output(selected_files, title, language)
         else:
             return jsonify({'error': f'Unsupported output type: {output_type}'}), 400
+ main
         
         return jsonify(result)
     
@@ -160,9 +236,18 @@ def generate_presentation():
         return jsonify({'error': 'An error occurred during presentation generation. Please try again.'}), 500
 
 
-def generate_video_presentation(files, title, language):
+def generate_video_presentation(files, title, language, clarification_notes=''):
     """Generate video presentation from files"""
     text_chunks = []
+    
+    # Add clarification notes as the first chunk if provided
+    # Note: clarification_notes is already sanitized in the route handler
+    if clarification_notes:
+        notes_prefix = "ملاحظات توضيحية: " if language == 'ar' else "Clarification Notes: "
+        notes_text = notes_prefix + clarification_notes
+        
+        # Use smart chunking to preserve sentence/word boundaries
+        text_chunks.extend(smart_chunk_text(notes_text, NOTES_CHUNK_SIZE))
     
     # Extract content from files
     for filename in files:
@@ -227,13 +312,28 @@ def generate_video_presentation(files, title, language):
         return {'error': 'Failed to generate video'}
 
 
+ copilot/add-report-clarification-box
+def generate_powerpoint_presentation(files, title, language, clarification_notes=''):
+
 def generate_powerpoint_presentation(files, title, language, max_slides=None):
+ main
     """Generate PowerPoint presentation from files"""
     try:
         presentation_builder = PresentationBuilder()
         
         # Extract content from files
         slides_content = []
+        
+        # Add clarification notes as the first slide if provided
+        # Note: clarification_notes is already sanitized in the route handler
+        if clarification_notes:
+            notes_title = 'ملاحظات توضيحية' if language == 'ar' else 'Clarification Notes'
+            
+            slides_content.append({
+                'title': notes_title,
+                'content': clarification_notes,
+                'source': 'user_input'
+            })
         
         for filename in files:
             try:
