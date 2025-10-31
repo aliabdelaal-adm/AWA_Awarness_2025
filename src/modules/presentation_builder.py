@@ -7,10 +7,18 @@ from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.enum.text import PP_ALIGN
 from pptx.dml.color import RGBColor
-from arabic_reshaper import reshape
-from bidi.algorithm import get_display
 import os
 from typing import List, Dict, Optional
+
+# Try to import Arabic text support libraries
+try:
+    from arabic_reshaper import reshape
+    from bidi.algorithm import get_display
+    ARABIC_SUPPORT = True
+except ImportError:
+    ARABIC_SUPPORT = False
+    print("Warning: Arabic text reshaping libraries not installed. Arabic text may not display correctly.")
+    print("Install with: pip install arabic-reshaper python-bidi")
 
 
 class PresentationBuilder:
@@ -30,12 +38,17 @@ class PresentationBuilder:
         Returns:
             Properly formatted Arabic text
         """
+        if not ARABIC_SUPPORT:
+            # Return original text if libraries not available
+            return text
+        
         try:
             reshaped_text = reshape(text)
             bidi_text = get_display(reshaped_text)
             return bidi_text
-        except:
+        except Exception as e:
             # If reshaping fails, return original text
+            print(f"Warning: Arabic text reshaping failed: {e}")
             return text
         
     def create_presentation(self, title: str, slides: List[Dict], 
