@@ -181,6 +181,31 @@
             cursor: pointer;
         }
         
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            resize: vertical;
+            transition: border-color 0.3s;
+            min-height: 120px;
+        }
+        
+        .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .textarea-hint {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        
         .button {
             padding: 15px 30px;
             font-size: 1.1em;
@@ -368,6 +393,16 @@
                         <option value="powerpoint">📊 عرض باور بوينت (PowerPoint Presentation)</option>
                     </select>
                 </div>
+                
+                <div class="form-group">
+                    <label class="form-label" id="notesLabel">📝 ملاحظات وتوضيحات إضافية (اختياري):</label>
+                    <textarea id="clarificationNotes" class="form-textarea" 
+                              placeholder="أدخل هنا أي ملاحظات أو توضيحات أو تعليمات إضافية لإعداد التقرير أو العرض المطلوب... يمكنك الكتابة بدون حد أقصى للأحرف"
+                              rows="6"></textarea>
+                    <div class="textarea-hint" id="notesHint">
+                        يمكنك كتابة أي توضيحات أو متطلبات أو ملاحظات تساعد في إعداد العرض أو التقرير بالشكل المطلوب. لا يوجد حد أقصى لعدد الكلمات أو الأحرف.
+                    </div>
+                </div>
             </div>
             
             <!-- Generate Section -->
@@ -412,6 +447,8 @@
                 titleLabel: 'عنوان العرض:',
                 languageLabel: 'اللغة:',
                 typeLabel: 'نوع الإخراج:',
+                notesLabel: '📝 ملاحظات وتوضيحات إضافية (اختياري):',
+                notesHint: 'يمكنك كتابة أي توضيحات أو متطلبات أو ملاحظات تساعد في إعداد العرض أو التقرير بالشكل المطلوب. لا يوجد حد أقصى لعدد الكلمات أو الأحرف.',
                 generateTitle: '✨ إنشاء العرض',
                 generateBtnText: 'إعداد العرض الإحترافي',
                 clearBtnText: 'مسح الكل وإعادة البدء',
@@ -428,6 +465,8 @@
                 titleLabel: 'Presentation Title:',
                 languageLabel: 'Language:',
                 typeLabel: 'Output Type:',
+                notesLabel: '📝 Additional Notes & Clarifications (Optional):',
+                notesHint: 'You can write any clarifications, requirements, or notes to help prepare the presentation or report as needed. No character or word limit.',
                 generateTitle: '✨ Generate Presentation',
                 generateBtnText: 'Generate Professional Presentation',
                 clearBtnText: 'Clear All and Restart',
@@ -567,6 +606,7 @@
             const title = document.getElementById('presentationTitle').value;
             const language = document.getElementById('presentationLanguage').value;
             const outputType = document.getElementById('outputType').value;
+            const clarificationNotes = document.getElementById('clarificationNotes').value;
             
             const generateBtn = document.getElementById('generateBtn');
             const loadingDiv = document.getElementById('loadingDiv');
@@ -581,6 +621,7 @@
                 title: title,
                 language: language,
                 output_type: outputType,
+                clarification_notes: clarificationNotes,
                 files: uploadedFiles.map(f => f.filename)
             };
             
@@ -630,6 +671,7 @@
             document.getElementById('presentationTitle').value = currentLang === 'ar' 
                 ? 'عرض إحترافي مبتكر' 
                 : 'Professional Presentation';
+            document.getElementById('clarificationNotes').value = '';
         }
         
         // Load existing files on page load

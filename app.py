@@ -127,15 +127,16 @@ def generate_presentation():
         title = data.get('title', 'عرض إحترافي')
         language = data.get('language', 'ar')
         selected_files = data.get('files', [])
+        clarification_notes = data.get('clarification_notes', '')  # New field for additional notes
         
         if not selected_files:
             return jsonify({'error': 'No files selected'}), 400
         
         # Process files and generate presentation
         if output_type == 'video':
-            result = generate_video_presentation(selected_files, title, language)
+            result = generate_video_presentation(selected_files, title, language, clarification_notes)
         else:
-            result = generate_powerpoint_presentation(selected_files, title, language)
+            result = generate_powerpoint_presentation(selected_files, title, language, clarification_notes)
         
         return jsonify(result)
     
@@ -145,9 +146,17 @@ def generate_presentation():
         return jsonify({'error': 'An error occurred during presentation generation. Please try again.'}), 500
 
 
-def generate_video_presentation(files, title, language):
+def generate_video_presentation(files, title, language, clarification_notes=''):
     """Generate video presentation from files"""
     text_chunks = []
+    
+    # Add clarification notes as the first chunk if provided
+    if clarification_notes and clarification_notes.strip():
+        # Split clarification notes into chunks if it's very long
+        notes_text = f"ملاحظات توضيحية: {clarification_notes}" if language == 'ar' else f"Clarification Notes: {clarification_notes}"
+        # Split into manageable chunks (300 chars each)
+        for i in range(0, len(notes_text), 300):
+            text_chunks.append(notes_text[i:i+300])
     
     # Extract content from files
     for filename in files:
@@ -212,13 +221,21 @@ def generate_video_presentation(files, title, language):
         return {'error': 'Failed to generate video'}
 
 
-def generate_powerpoint_presentation(files, title, language):
+def generate_powerpoint_presentation(files, title, language, clarification_notes=''):
     """Generate PowerPoint presentation from files"""
     try:
         presentation_builder = PresentationBuilder()
         
         # Extract content from files
         slides_content = []
+        
+        # Add clarification notes as the first slide if provided
+        if clarification_notes and clarification_notes.strip():
+            slides_content.append({
+                'title': 'ملاحظات توضيحية' if language == 'ar' else 'Clarification Notes',
+                'content': clarification_notes,
+                'source': 'user_input'
+            })
         
         for filename in files:
             try:
