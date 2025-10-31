@@ -747,7 +747,7 @@ def get_stats():
     
     except Exception as e:
         print(f"Error getting stats: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
+        return jsonify({'success': False, 'error': 'Failed to retrieve statistics'}), 500
 
 
 @app.route('/list-outputs')
@@ -774,7 +774,7 @@ def list_outputs():
     
     except Exception as e:
         print(f"Error listing outputs: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
+        return jsonify({'success': False, 'error': 'Failed to list output files'}), 500
 
 
 @app.route('/delete-file', methods=['POST'])
@@ -800,7 +800,7 @@ def delete_file():
     
     except Exception as e:
         print(f"Error deleting file: {e}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'Failed to delete file'}), 500
 
 
 @app.route('/delete-all-files', methods=['POST'])
@@ -820,7 +820,7 @@ def delete_all_files():
     
     except Exception as e:
         print(f"Error deleting all files: {e}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'Failed to delete all files'}), 500
 
 
 @app.route('/delete-output', methods=['POST'])
@@ -847,7 +847,7 @@ def delete_output():
     
     except Exception as e:
         print(f"Error deleting output: {e}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'Failed to delete output file'}), 500
 
 
 @app.route('/delete-all-outputs', methods=['POST'])
@@ -871,7 +871,7 @@ def delete_all_outputs():
     
     except Exception as e:
         print(f"Error deleting all outputs: {e}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'Failed to delete all outputs'}), 500
 
 
 @app.route('/download-all-files')
@@ -902,7 +902,7 @@ def download_all_files():
     
     except Exception as e:
         print(f"Error creating zip: {e}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'Failed to create archive'}), 500
 
 
 @app.route('/download-all-outputs')
@@ -937,7 +937,7 @@ def download_all_outputs():
     
     except Exception as e:
         print(f"Error creating zip: {e}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'Failed to create archive'}), 500
 
 
 @app.route('/save-config', methods=['POST'])
@@ -977,7 +977,7 @@ def save_config():
     
     except Exception as e:
         print(f"Error saving config: {e}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'Failed to save configuration'}), 500
 
 
 if __name__ == '__main__':
