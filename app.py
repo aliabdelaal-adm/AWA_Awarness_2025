@@ -183,7 +183,6 @@ def generate_presentation():
         title = data.get('title', 'عرض إحترافي')
         language = data.get('language', 'ar')
         selected_files = data.get('files', [])
- copilot/add-report-clarification-box
         clarification_notes = data.get('clarification_notes', '')  # New field for additional notes
         
         # Validate and sanitize clarification notes
@@ -201,21 +200,15 @@ def generate_presentation():
             clarification_notes = html.escape(clarification_notes)
 
         max_slides = data.get('max_slides', None)  # Optional slide limit
- main
         
         if not selected_files:
             return jsonify({'error': 'No files selected'}), 400
         
         # Process files and generate presentation based on output type
         if output_type == 'video':
- copilot/add-report-clarification-box
             result = generate_video_presentation(selected_files, title, language, clarification_notes)
-        else:
-            result = generate_powerpoint_presentation(selected_files, title, language, clarification_notes)
-
-            result = generate_video_presentation(selected_files, title, language)
         elif output_type == 'powerpoint':
-            result = generate_powerpoint_presentation(selected_files, title, language, max_slides)
+            result = generate_powerpoint_presentation(selected_files, title, language, clarification_notes, max_slides)
         elif output_type == 'excel':
             result = generate_excel_output(selected_files, title, language)
         elif output_type == 'word':
@@ -224,7 +217,6 @@ def generate_presentation():
             result = generate_pdf_output(selected_files, title, language)
         else:
             return jsonify({'error': f'Unsupported output type: {output_type}'}), 400
- main
         
         return jsonify(result)
     
@@ -312,11 +304,7 @@ def generate_video_presentation(files, title, language, clarification_notes=''):
         return {'error': 'Failed to generate video'}
 
 
- copilot/add-report-clarification-box
-def generate_powerpoint_presentation(files, title, language, clarification_notes=''):
-
-def generate_powerpoint_presentation(files, title, language, max_slides=None):
- main
+def generate_powerpoint_presentation(files, title, language, clarification_notes='', max_slides=None):
     """Generate PowerPoint presentation from files"""
     try:
         presentation_builder = PresentationBuilder()
@@ -687,6 +675,42 @@ def download_pdf(filename):
             return jsonify({'error': 'File not found'}), 404
     except (ValueError, Exception):
         return jsonify({'error': 'Invalid file path'}), 400
+
+
+@app.route('/admin')
+def admin_dashboard():
+    """Admin dashboard for developers and system owners"""
+    # Get statistics
+    stats = {
+        'uploaded_files': 0,
+        'videos': 0,
+        'presentations': 0,
+        'reports': 0,
+        'excel_files': 0
+    }
+    
+    # Count uploaded files
+    if os.path.exists(UPLOAD_FOLDER):
+        stats['uploaded_files'] = len([f for f in os.listdir(UPLOAD_FOLDER) if os.path.isfile(os.path.join(UPLOAD_FOLDER, f)) and f != '.gitkeep'])
+    
+    # Count outputs
+    videos_path = os.path.join(OUTPUT_FOLDER, 'videos')
+    if os.path.exists(videos_path):
+        stats['videos'] = len([f for f in os.listdir(videos_path) if os.path.isfile(os.path.join(videos_path, f)) and f != '.gitkeep'])
+    
+    presentations_path = os.path.join(OUTPUT_FOLDER, 'presentations')
+    if os.path.exists(presentations_path):
+        stats['presentations'] = len([f for f in os.listdir(presentations_path) if os.path.isfile(os.path.join(presentations_path, f)) and f != '.gitkeep'])
+    
+    reports_path = os.path.join(OUTPUT_FOLDER, 'reports')
+    if os.path.exists(reports_path):
+        stats['reports'] = len([f for f in os.listdir(reports_path) if os.path.isfile(os.path.join(reports_path, f)) and f != '.gitkeep'])
+    
+    excel_path = os.path.join(OUTPUT_FOLDER, 'excel')
+    if os.path.exists(excel_path):
+        stats['excel_files'] = len([f for f in os.listdir(excel_path) if os.path.isfile(os.path.join(excel_path, f)) and f != '.gitkeep'])
+    
+    return render_template('admin.html', stats=stats)
 
 
 @app.route('/health')
